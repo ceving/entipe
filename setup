@@ -1,0 +1,81 @@
+#! /bin/bash
+##
+## Install eql.cgi and eql.cfg.
+##
+## Time-stamp: <2015-10-25 17:07:45 szi>
+##
+
+#set -x
+
+set -eu
+
+case ${1:-} in
+  -h) echo "Usage: $0 [--development -d -h]"; exit;;
+esac
+
+export LANG=C
+
+SELF=$$
+trap -- 'exit 1' SIGTERM
+die () { echo "$0: ERROR: $*" >&2; kill $SELF; }
+
+
+# Search required binaries.
+
+bin() { type -p "$1" ||
+            die "Can not find '$1' binary. Set ${1^^} environment."; }
+
+: ${INSTALL:=$(bin install)}
+: ${APACHECTL:=$(bin apachectl)}
+
+# Search Apache parameters.
+
+while read LINE; do
+  if [[ "$LINE" =~ ^([^:]+):\ \"([^\"]+)\"$ ]]
+  then
+      case ${BASH_REMATCH[1]} in
+        ServerRoot) : ${SERVER_ROOT:=${BASH_REMATCH[2]}};;
+        Main\ DocumentRoot) : ${DOCUMENT_ROOT:=${BASH_REMATCH[2]}};;
+      esac
+  fi
+done < <(apachectl -S)
+
+# Search cgi-bin.
+
+: ${CGI_BIN:=$(CGI_BINS=($(find /etc/apache* -type f |
+                                xargs awk '/ScriptAlias/ {print $3}' |
+                                while read D ; do
+                                  [ -d "$D" ] && echo "$D"
+                                done |
+                                sort -u ))
+               [ "${#CGI_BINS[@]}" = 1 ] ||
+                   die "Can not find unique ScriptAlias. Set CGI_BIN."
+               echo ${CGI_BINS[0]})}
+
+# Search cfg path.
+
+: ${EQL_CFG:=$(sed -n "/CFG->new/{s/.*'\(.\+\)'.*/\1/p;q};\$q1" eql.cgi ||
+                    die "Can not find configuration path. Set EQL_CFG.")}
+
+# Redefine install for development or production.
+
+case ${1:-} in
+  --development|-d)
+    shift
+    install() {
+      echo "Linking '$2' to '$3'."
+      rm -f "$3"; ln "$2" "$3"
+    };;
+  *)
+    install() {
+      echo "Installing '$2' in '$3'."
+      rm -f "$3"; $INSTALL -m "$1" "$2" "$3"
+    };;
+esac
+
+# Install files.
+
+install 755 eql.cgi "${CGI_BIN%/}/eql"
+install 755 eql.cfg "$EQL_CFG"
+
+install 
