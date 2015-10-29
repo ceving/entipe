@@ -23,7 +23,7 @@ The GET request to the Entipe server reads the database schema and
 returns a JavaScript schema definition, which might look like this:
 
 #+BEGIN_SRC javascript
-var demo = new Schema("http://127.0.1.1/entipe.cgi?demo",
+var demo = new Schema("http://localhost/entipe.cgi?demo",
                       {"address":["street","locality","country"],
                        "person":["firstname","lastname"]});
 #+END_SRC
