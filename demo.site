@@ -1,7 +1,7 @@
 <VirtualHost *:80>
-	DocumentRoot /var/www/entipe
-	<Directory "/var/www/entipe">
-		Options +FollowSymLinks +ExecCGI
-		AddHandler cgi-script .cgi
-	</Directory>
+  DocumentRoot /var/www/entipe
+  <Directory "/var/www/entipe">
+    Options +ExecCGI
+    AddHandler cgi-script .cgi
+  </Directory>
 </VirtualHost>

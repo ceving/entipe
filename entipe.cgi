@@ -1,20 +1,9 @@
-#! /bin/bash
-export NYTPROF=addtimestamp=1:addpid=1:trace=1:start=init:file=/tmp/entipe.out
-#! -*-perl-*-
-eval 'exec perl -d:NYTProf -x/tmp $0 ${1+"$@"}'
-    if 0;
-
-use strict;
-use warnings;
-
-#BEGIN
-#{
-#  push @INC, '/home/szi/p/ceving/scratch/jsops';
-#}
-
+#! /usr/bin/perl
 
 ######################################################################
 package CFG;
+use strict;
+use warnings;
 
 sub set
 {
@@ -47,8 +36,8 @@ sub load
 {
     my ($self, $file) = @_;
 
-    my $cfg;
-    return unless open $cfg, '<', $file;
+    open (my $cfg, '<', $file) || warn "Can not open file: $!";
+    return unless defined $cfg;
     my @context = ();
     my $id = qr/[a-z_][a-z0-9_.-]*/;
     while (<$cfg>) {
@@ -82,27 +71,25 @@ sub new
 ######################################################################
 package main;
 
-use DBI;
+use strict;
+use warnings;
 use Data::Dumper;
+use DBI;
 use JSON;
 use CGI::Carp;
 use Parse::RecDescent;
 use Encode qw(decode_utf8);
 use POSIX qw(strftime);
-#use CFG;
-
-my $CFG = CFG->new('/etc/eql.cfg');
 
 sub stdout { print STDOUT @_; }
 sub stderr { print STDERR @_; }
+sub debug { stderr Dumper(@_) }
 
 sub debug_str {
   for (@_) {
     stderr Encode::is_utf8($_) ? 'UTF-8' : 'BINARY', ': ', Dumper ($_);
   }
 }
-
-sub debug { stderr Dumper(@_) }
 
 sub timestamp
 {
@@ -119,17 +106,25 @@ sub timestamp
 }
 
 debug \%ENV;
-debug $CFG;
 
 #
 # Must constraints
 #
 die "Gateway interface is not CGI/1.1"
     unless $ENV{GATEWAY_INTERFACE} =~ m{\bCGI/1.1\b}i;
-die "Application is unknown"
-    unless exists $CFG->{app}->{$ENV{QUERY_STRING}};
 die "Request is neither GET nor POST"
     unless $ENV{REQUEST_METHOD} eq 'GET' || $ENV{REQUEST_METHOD} eq 'POST';
+die "Invalid query string"
+    unless $ENV{QUERY_STRING} =~ /^[a-z][a-z0-9]*$/i;
+
+my $APP = $ENV{QUERY_STRING};
+my $CFG = CFG->new("$APP.cfg");
+debug $CFG;
+
+die "Application is unknown"
+    unless exists $CFG->{app}->{$APP};
+
+my $URL = $ENV{REQUEST_SCHEME} . '://'. $ENV{HTTP_HOST} . $ENV{REQUEST_URI};
 
 #
 # Should constraints
@@ -143,24 +138,24 @@ warn "Request is not encrypted"
 binmode STDIN;
 binmode STDOUT;
 
-my $header;
-my $body;
+my $HEADER;
+my $BODY;
 
 #
 # Open database connection
 #
-my $db = $CFG->{app}->{$ENV{QUERY_STRING}}->{db};
+my $DB = $CFG->{app}->{$APP}->{db};
 
-die "Database driver undefined" unless exists $db->{driver};
-die "Database name undefined" unless exists $db->{name};
+die "Database driver undefined" unless exists $DB->{driver};
+die "Database name undefined" unless exists $DB->{name};
 
-my $dbh = DBI->connect (
-  join (':', 'dbi', $db->{driver}, $db->{name}),
+my $DBH = DBI->connect (
+  join (':', 'dbi', $DB->{driver}, $DB->{name}),
   undef, undef, {
     RaiseError => 1,
     sqlite_unicode => 1
   }) || die $DBI::errstr;
-#$dbh->trace(2);
+#$DBH->trace(2);
 
 #
 # JSON encoder
@@ -177,9 +172,9 @@ if ($ENV{REQUEST_METHOD} eq 'GET')
   #
   # Get a list of all tables
   #
-  $sth = $dbh->prepare (
+  $sth = $DBH->prepare (
     q{select name from sqlite_master where name not like 'sqlite_%'}) ||
-    die "Can not prepare statement: " . $dbh->errstr;
+    die "Can not prepare statement: " . $DBH->errstr;
   $sth->execute();
   my @tables = map { $_->[0] } @{$sth->fetchall_arrayref ()};
   $sth->finish();
@@ -189,24 +184,23 @@ if ($ENV{REQUEST_METHOD} eq 'GET')
   #
   my $schema;
   for my $table (@tables) {
-    my $sql = 'pragma table_info('.$dbh->quote_identifier($table).')';
+    my $sql = 'pragma table_info('.$DBH->quote_identifier($table).')';
     debug $sql;
-    $sth = $dbh->prepare ($sql) ||
-        die "Can not prepare statement: " . $dbh->errstr;
+    $sth = $DBH->prepare ($sql) ||
+        die "Can not prepare statement: " . $DBH->errstr;
     $sth->execute();
     my $rows = $sth->fetchall_arrayref ({});
     $schema->{$table} = [grep { $_ ne 'id' } map { $_->{name} } @$rows];
   }
 
-  my $url = $JSON->allow_nonref->encode (
-    $ENV{REQUEST_SCHEME} . '://'. $ENV{HTTP_HOST} . $ENV{REQUEST_URI});
+  my $url = $JSON->allow_nonref->encode ($URL);
   my $schema_json = $JSON->encode ($schema);
-  $body = qq{var $ENV{QUERY_STRING} = new Schema($url, $schema_json);};
+  $BODY = qq{var $APP = new Schema($url, $schema_json);};
 
   my $now = timestamp;
 
-  $header = join ("\r\n",
-                  "Content-length:" . length($body),
+  $HEADER = join ("\r\n",
+                  "Content-length:" . length($BODY),
                   "Content-Type:application/javascript;charset=utf-8",
                   "Date:" . $now,
                   "Expires:" . $now,
@@ -242,7 +236,7 @@ elsif ($ENV{REQUEST_METHOD} eq 'POST')
   #
   # Query database
   #
-  my $sth = $dbh->prepare ($sql);
+  my $sth = $DBH->prepare ($sql);
   $sth->execute();
 
   my $data = $sth->fetchall_arrayref ({});
@@ -253,9 +247,9 @@ elsif ($ENV{REQUEST_METHOD} eq 'POST')
   # Return response
   #
   my $now = timestamp;
-  $body = $JSON->encode ($data);
-  $header = join ("\r\n",
-                  "Content-length:" . length($body),
+  $BODY = $JSON->encode ($data);
+  $HEADER = join ("\r\n",
+                  "Content-length:" . length($BODY),
                   "Content-Type:application/json;charset=utf-8",
                   "Date:" . $now,
                   "Expires:" . $now,
@@ -267,15 +261,15 @@ elsif ($ENV{REQUEST_METHOD} eq 'POST')
 #
 # Disconnect database.
 #
-$dbh->disconnect ();
+$DBH->disconnect ();
 
 #
 # Deliver response.
 #
-debug $header;
-debug $body;
+debug $HEADER;
+debug $BODY;
 
-stdout $header, $body;
+stdout $HEADER, $BODY;
 
 __DATA__
 

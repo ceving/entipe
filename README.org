@@ -1,12 +1,23 @@
-* entipe
-  Entity Persistence
+* Entipe
+Entipe tries to provide entity persistence for web applications.
+Unlike other approaches it concentrates on entities.  Entities are
+defined by a database schema.  A web application can read and write
+entities and their attributes but can not define new entities or
+modify the database schema.
 
-** Development Setup Debian
-   The development configuration is insecure!
-   : sudo mkdir /var/www/entipe
-   : sudo chown $(id -u) /var/www/entipe
-   : git clone https://github.com/ceving/entipe.git /var/www/entipe
-   : sudo ln -s /var/www/entipe/demo.site /etc/apache2/sites-available/entipe.conf
-   : sudo a2ensite entipe
-   : sudo service apache2 reload
+** Development Setup CGI
+The development configuration is insecure, because all files are in
+the document root of the web server.  This means that files are
+publicly accessible though the web server.  The setup is intended only
+for development using only public data.
 
+The following configuration has been tested with Debian 8.2.
+
+: sudo mkdir /var/www/entipe
+: sudo chown $(id -u).$(id -g) /var/www/entipe
+: git clone https://github.com/ceving/entipe.git /var/www/entipe
+: sudo ln -s /var/www/entipe/demo.site /etc/apache2/sites-available/entipe.conf
+: sudo a2ensite entipe
+: sudo service apache2 reload
+
+Next the demo can be accessed via http://localhost/demo.html.
