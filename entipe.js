@@ -9,8 +9,9 @@ var Schema = function (url, schema)
 
   for (entity in schema)
   {
-    Entity = function (id, values)
+    Entity = function (values)
     {
+      var id;
       var attribute;
 
       Object.defineProperty (this, "id", {
@@ -22,7 +23,7 @@ var Schema = function (url, schema)
           Object.defineProperty (that, attribute, {
             enumerable: true,
             get: function () { return values[attribute]; },
-            set: function (value) { return vaulues[attribute] = value; }});
+            set: function (value) { return values[attribute] = value; }});
         })(this, attribute);
       }
     };

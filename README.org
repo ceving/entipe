@@ -5,6 +5,30 @@ defined by a database schema.  A web application can read and write
 entities and their attributes but can not define new entities or
 modify the database schema.
 
+Entipe consists of two parts: a client library written in JavaScript
+and a server.  The prototype for the reference server is implemented
+as a CGI script in Perl.  Other server implementations will follow
+after version 1.0 has been finished.
+
+An application has to load the Entipe client library and has to query
+the Entipe server for the database schema.  This can be done by two
+script tags in the web page.
+
+: <script src="entipe.js"></script>
+: <script src="entipe.cgi?demo"></script>
+
+The above code will create a schema object called demo.  The schema
+object can be use to create entities.
+
+: peter = new demo.person({"firstname":"Peter", "lastname":"Pan"})
+: -> Entity {}
+: peter.firstname
+: -> "Peter"
+: peter.lastname = "Parker"
+: -> "Parker"
+: peter.lastname
+: -> "Parker"
+
 ** Development Setup CGI
 The development configuration is insecure, because all files are in
 the document root of the web server.  This means that files are
