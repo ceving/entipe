@@ -22,14 +22,16 @@ script tags in the web page.
 The above code will create a schema object called demo.  The schema
 object can be use to create entities.
 
-: peter = new demo.person({"firstname":"Peter", "lastname":"Pan"})
-: -> Entity {}
-: peter.firstname
-: -> "Peter"
-: peter.lastname = "Parker"
-: -> "Parker"
-: peter.lastname
-: -> "Parker"
+#+BEGIN_SRC javascript
+peter = new demo.person({"firstname":"Peter", "lastname":"Pan"})
+-> Entity {}
+peter.firstname
+-> "Peter"
+peter.lastname = "Parker"
+-> "Parker"
+peter.lastname
+-> "Parker"
+#+END_SRC
 
 ** Development Setup CGI
 The development configuration is insecure, because all files are in
