@@ -1,2 +1,0 @@
-# entipe
-Entity Persistence
