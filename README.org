@@ -14,8 +14,10 @@ An application has to load the Entipe client library and has to query
 the Entipe server for the database schema.  This can be done by two
 script tags in the web page.
 
-: <script src="entipe.js"></script>
-: <script src="entipe.cgi?demo"></script>
+#+BEGIN_SRC html
+<script src="entipe.js"></script>
+<script src="entipe.cgi?demo"></script>
+#+END_SRC
 
 The above code will create a schema object called demo.  The schema
 object can be use to create entities.
