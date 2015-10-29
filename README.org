@@ -41,11 +41,13 @@ for development using only public data.
 
 The following configuration has been tested with Debian 8.2.
 
-: sudo mkdir /var/www/entipe
-: sudo chown $(id -u).$(id -g) /var/www/entipe
-: git clone https://github.com/ceving/entipe.git /var/www/entipe
-: sudo ln -s /var/www/entipe/demo.site /etc/apache2/sites-available/entipe.conf
-: sudo a2ensite entipe
-: sudo service apache2 reload
+#+BEGIN_SRC sh
+sudo mkdir /var/www/entipe
+sudo chown $(id -u).$(id -g) /var/www/entipe
+git clone https://github.com/ceving/entipe.git /var/www/entipe
+sudo ln -s /var/www/entipe/demo.site /etc/apache2/sites-available/entipe.conf
+sudo a2ensite entipe
+sudo service apache2 reload
+#+END_SRC
 
 Next the demo can be accessed via [[http://localhost/demo.html][http://localhost/demo.html]].
