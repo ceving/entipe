@@ -44,4 +44,4 @@ The following configuration has been tested with Debian 8.2.
 : sudo a2ensite entipe
 : sudo service apache2 reload
 
-Next the demo can be accessed via http://localhost/demo.html.
+Next the demo can be accessed via [[http://localhost/demo.html][http://localhost/demo.html]].
