@@ -42,6 +42,14 @@ peter.lastname
 -> "Parker"
 #+END_SRC
 
+The Entipe client sends queries to the Entipe server using a SQL
+subset with some Entipe specific extensions.  The Entipe server sends
+JSON encoded data to the Entipe client.  The Entipe server works as a
+proxy, parsing the Entipe specific SQL and translating it into
+database specific SQL.  The Entipe server has to validate the client
+requests to reject requests the client is not allowed to query.  This
+implies all DDL statements.
+
 ** Development Setup CGI
 The development configuration is insecure, because all files are in
 the document root of the web server.  This means that files are
