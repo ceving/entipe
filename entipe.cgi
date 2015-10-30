@@ -235,7 +235,7 @@ my $URL = $ENV{REQUEST_SCHEME} . '://'. $ENV{HTTP_HOST} . $ENV{REQUEST_URI};
 # Should constraints
 
 warn "Request is not encrypted"
-    unless $ENV{REQUEST_SCHEME} eq 'HTTPS';
+    unless $ENV{REQUEST_SCHEME} =~ /^https$/i;
 
 # Binary IO
 

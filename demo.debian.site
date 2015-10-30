@@ -1,0 +1,15 @@
+<VirtualHost _default_:443>
+  SSLEngine on
+  SSLProtocol All -SSLv2 -SSLv3
+  SSLCompression Off
+  SSLCipherSuite RSA:!EXP:!NULL:+HIGH:-MEDIUM:-LOW
+  SSLHonorCipherOrder on
+  SSLCertificateFile /etc/ssl/certs/ssl-cert-snakeoil.pem
+  SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
+  DocumentRoot /var/www/entipe
+  <Directory "/var/www/entipe">
+    Options +ExecCGI
+    AddHandler cgi-script .cgi
+    SSLOptions +StdEnvVars
+  </Directory>
+</VirtualHost>

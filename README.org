@@ -5,6 +5,7 @@ defined by a database schema.  A web application can read and write
 entities and their attributes but can not define new entities or
 modify the database schema.
 
+** Design
 Entipe consists of two parts: a client library written in JavaScript
 and a server.  The prototype for the reference server is implemented
 as a CGI script in Perl.  Other server implementations will follow
@@ -50,21 +51,43 @@ database specific SQL.  The Entipe server has to validate the client
 requests to reject requests the client is not allowed to query.  This
 implies all DDL statements.
 
+
 ** Development Setup CGI
 The development configuration is insecure, because all files are in
 the document root of the web server.  This means that files are
 publicly accessible though the web server.  The setup is intended only
 for development using only public data.
 
+*** Install
 The following configuration has been tested with Debian 8.2.
 
 #+BEGIN_SRC sh
-sudo mkdir /var/www/entipe
+sudo apt-get install apache2
+sudo a2enmod ssl
+sudo mkdir -m 755 /var/www/entipe
 sudo chown $(id -u).$(id -g) /var/www/entipe
 git clone https://github.com/ceving/entipe.git /var/www/entipe
-sudo ln -s /var/www/entipe/demo.site /etc/apache2/sites-available/entipe.conf
+sudo ln -s /var/www/entipe/demo.debian.site /etc/apache2/sites-available/entipe.conf
 sudo a2ensite entipe
 sudo service apache2 reload
 #+END_SRC
 
 Next the demo can be accessed via [[http://localhost/demo.html][http://localhost/demo.html]].
+
+*** Uninstall
+Execute the following to uninstall the demo.
+
+#+BEGIN_SRC sh
+sudo a2dissite entipe
+sudo rm /etc/apache2/sites-available/entipe.conf
+sudo rm -rf /var/www/entipe
+sudo apt-get uninstall apache2
+#+END_SRC sh
+
+
+
+
+* # :NOEXPORT:ARCHIVE:
+Local Variables:
+  ispell-local-dictionary: "american"
+End:
