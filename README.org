@@ -1,4 +1,4 @@
-* :noexport:
+* :archive: :noexport:
 #+EXPORT_EXCLUDE_TAGS: noexport
 #+EMAIL: ceving@gmail.com
 #+LANGUAGE: en
