@@ -1,3 +1,16 @@
+* Meta :noexport:
+#+TITLE: Entipe
+#+EMAIL: ceving@gmail.com
+#+LANGUAGE: en
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+STARTUP: hidestars
+#+BEGIN_COMMENT
+Local Variables:
+  ispell-local-dictionary: "american"
+End:
+#+END_COMMENT
+
+
 * Entipe
 Entipe tries to provide entity persistence for web applications.
 Unlike other approaches it concentrates on entities.  Entities are
@@ -84,10 +97,3 @@ sudo rm -rf /var/www/entipe
 sudo apt-get uninstall apache2
 #+END_SRC sh
 
-
-
-
-* # :NOEXPORT:ARCHIVE:
-Local Variables:
-  ispell-local-dictionary: "american"
-End:
