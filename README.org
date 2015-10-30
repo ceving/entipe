@@ -1,23 +1,14 @@
-* :archive: :noexport:
-#+EXPORT_EXCLUDE_TAGS: noexport
-#+EMAIL: ceving@gmail.com
+#+COMMENT: -*- ispell-local-dictionary: "american" -*-
 #+LANGUAGE: en
-#+STARTUP: hidestars
-#+BEGIN_COMMENT
-Local Variables:
-  ispell-local-dictionary: "american"
-End:
-#+END_COMMENT
+#+TITLE: Entipe
 
-
-* Entipe
 Entipe tries to provide entity persistence for web applications.
 Unlike other approaches it concentrates on entities.  Entities are
 defined by a database schema.  A web application can read and write
 entities and their attributes but can not define new entities or
 modify the database schema.
 
-** Design
+* Design
 Entipe consists of two parts: a client library written in JavaScript
 and a server.  The prototype for the reference server is implemented
 as a CGI script in Perl.  Other server implementations will follow
@@ -64,13 +55,13 @@ requests to reject requests the client is not allowed to query.  This
 implies all DDL statements.
 
 
-** Development Setup CGI
+* Development Setup CGI
 The development configuration is insecure, because all files are in
 the document root of the web server.  This means that files are
 publicly accessible though the web server.  The setup is intended only
 for development using only public data.
 
-*** Install
+** Install
 The following configuration has been tested with Debian 8.2.
 
 #+BEGIN_SRC sh
@@ -86,7 +77,7 @@ sudo service apache2 reload
 
 Next the demo can be accessed via [[http://localhost/demo.html][http://localhost/demo.html]].
 
-*** Uninstall
+** Uninstall
 Execute the following to uninstall the demo.
 
 #+BEGIN_SRC sh
