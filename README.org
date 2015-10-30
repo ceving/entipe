@@ -1,8 +1,6 @@
-* Meta :noexport:
-#+TITLE: Entipe
+* Meta :archive:noexport:
 #+EMAIL: ceving@gmail.com
 #+LANGUAGE: en
-#+EXPORT_EXCLUDE_TAGS: noexport
 #+STARTUP: hidestars
 #+BEGIN_COMMENT
 Local Variables:
