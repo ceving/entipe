@@ -66,7 +66,7 @@ The following configuration has been tested with Debian 8.2.
 
 #+BEGIN_SRC sh
 sudo apt-get install apache2
-sudo a2enmod ssl
+sudo a2enmod ssl cgi
 sudo mkdir -m 755 /var/www/entipe
 sudo chown $(id -u).$(id -g) /var/www/entipe
 git clone https://github.com/ceving/entipe.git /var/www/entipe
@@ -84,6 +84,6 @@ Execute the following to uninstall the demo.
 sudo a2dissite entipe
 sudo rm /etc/apache2/sites-available/entipe.conf
 sudo rm -rf /var/www/entipe
-sudo apt-get uninstall apache2
+sudo apt-get remove --purge apache2
+sudo apt-get autoremove --purge
 #+END_SRC sh
-

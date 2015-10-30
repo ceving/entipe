@@ -7,9 +7,11 @@
   SSLCertificateFile /etc/ssl/certs/ssl-cert-snakeoil.pem
   SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
   DocumentRoot /var/www/entipe
-  <Directory "/var/www/entipe">
+  AddHandler cgi-script .cgi
+  <Location "/">
     Options +ExecCGI
-    AddHandler cgi-script .cgi
+  </Location>
+  <Files ~ "\.cgi$">
     SSLOptions +StdEnvVars
-  </Directory>
+  </Files>
 </VirtualHost>
