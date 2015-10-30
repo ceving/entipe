@@ -8,8 +8,15 @@
   SSLCertificateKeyFile /etc/ssl/private/ssl-cert-snakeoil.key
   DocumentRoot /var/www/entipe
   AddHandler cgi-script .cgi
+  AddExternalAuth pwauth /usr/sbin/pwauth
+  SetExternalAuthMethod pwauth pipe
   <Location "/">
     Options +ExecCGI
+    AuthType Basic
+    AuthName "Entipe"
+    AuthBasicProvider external
+    AuthExternal pwauth
+    require valid-user
   </Location>
   <Files ~ "\.cgi$">
     SSLOptions +StdEnvVars
