@@ -1,4 +1,4 @@
-* Meta :noexport:
+* Meta :NOEXPORT:
 #+EMAIL: ceving@gmail.com
 #+LANGUAGE: en
 #+STARTUP: hidestars
