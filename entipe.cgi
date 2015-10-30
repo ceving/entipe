@@ -2,6 +2,8 @@
 
 ######################################################################
 package DEBUG;
+use strict;
+use warnings;
 use Carp;
 use Data::Dumper;
 
@@ -12,6 +14,41 @@ sub warn
   $msg =~ s/\n*$//;
   carp $msg;
   return @_;
+}
+
+######################################################################
+package SESSION;
+use strict;
+use warnings;
+use Carp;
+use Time::HiRes qw(gettimeofday);
+use integer;
+use constant BITS_32 => 0xffffffff;
+
+sub xorshift32
+{
+  my $x = int($_[0]) & BITS_32;
+  $x ^= ($x << 13) & BITS_32;
+  $x ^= ($x >> 17) & BITS_32;
+  $x ^= ($x << 5) & BITS_32;
+  return $x;
+}
+
+sub id
+{
+  croak "SCRIPT_FILENAME undefined" unless exists $ENV{SCRIPT_FILENAME};
+  croak "REMOTE_PORT undefined" unless exists $ENV{REMOTE_PORT};
+
+  my ($devid, $inode) = stat $ENV{SCRIPT_FILENAME};
+  my $rport = int $ENV{REMOTE_PORT};
+  my ($sec, $msec) = gettimeofday;
+
+  my $r0 = xorshift32($$ * (1+{}) * $devid * $inode * $rport * $sec * $msec);
+  my $r1 = xorshift32($r0);
+  my $r2 = xorshift32($r1);
+  my $r3 = xorshift32($r2);
+
+  return sprintf ('%0.8X' x 4, $r0, $r1, $r2, $r3);
 }
 
 ######################################################################
@@ -213,6 +250,9 @@ use Parse::RecDescent;
 use Encode qw(decode_utf8);
 
 DEBUG->warn (\%ENV);
+
+DEBUG->warn (SESSION->id);
+DEBUG->warn (SESSION->id);
 
 # Must constraints
 
