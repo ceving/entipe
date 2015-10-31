@@ -65,8 +65,10 @@ for development using only public data.
 The following configuration has been tested with Debian 8.2.
 
 #+BEGIN_SRC sh
-sudo apt-get install apache2 libapache2-mod-authnz-external
+sudo apt-get install apache2 libapache2-mod-authnz-external 
 sudo a2enmod ssl cgi
+sudo apt-get install sqlite3 libdbd-sqlite3-perl
+sudo apt-get install libjson-perl libparse-recdescent-perl
 sudo mkdir -m 755 /var/www/entipe
 sudo chown $(id -u).$(id -g) /var/www/entipe
 git clone https://github.com/ceving/entipe.git /var/www/entipe
@@ -75,7 +77,7 @@ sudo a2ensite entipe
 sudo service apache2 restart
 #+END_SRC
 
-Next the demo can be accessed via [[http://localhost/demo.html][http://localhost/demo.html]].
+Next the demo can be accessed via [[https://localhost/demo.html]].
 
 *** Uninstall
 Execute the following to uninstall the demo.
@@ -85,5 +87,7 @@ sudo a2dissite entipe
 sudo rm /etc/apache2/sites-available/entipe.conf
 sudo rm -rf /var/www/entipe
 sudo apt-get remove --purge apache2 libapache2-mod-authnz-external
+sudo apt-get remove --purge sqlite3 libdbd-sqlite3-perl
+sudo apt-get remove --purge libjson-perl libparse-recdescent-perl
 sudo apt-get autoremove --purge
 #+END_SRC sh
