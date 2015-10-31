@@ -59,7 +59,9 @@ implies all DDL statements.
 The development configuration is insecure, because all files are in
 the document root of the web server.  This means that files are
 publicly accessible though the web server.  The setup is intended only
-for development using only public data.
+for development using only public data.  The following setup uses TLS
+encryption with the Debian default certificate and HTTP basic
+authentication with PAM.
 
 *** Install
 The following configuration has been tested with Debian 8.2.
@@ -79,8 +81,19 @@ sudo service apache2 restart
 
 Next the demo can be accessed via [[https://localhost/demo.html]].
 
+For profiling the following additional packages is required.
+
+#+BEGIN_SRC sh
+sudo apt-get install libdevel-nytprof-perl
+#+END_SRC
+
+But note that this installs about 15 further dependencies.
+
 *** Uninstall
-Execute the following to uninstall the demo.
+Execute the following to uninstall the demo.  Be sure that you do not
+uninstall packages, which had already been installed before you tried
+Entipe.  The packages =apache= and =sqlite3= are maybe already
+installed.
 
 #+BEGIN_SRC sh
 sudo a2dissite entipe
@@ -89,5 +102,6 @@ sudo rm -rf /var/www/entipe
 sudo apt-get remove --purge apache2 libapache2-mod-authnz-external
 sudo apt-get remove --purge sqlite3 libdbd-sqlite3-perl
 sudo apt-get remove --purge libjson-perl libparse-recdescent-perl
+sudo apt-get remove --purge libdevel-nytprof-perl
 sudo apt-get autoremove --purge
 #+END_SRC sh
