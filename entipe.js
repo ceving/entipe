@@ -2,37 +2,37 @@
 
 var Schema = function (url, schema)
 {
-  var entity;
-  var Entity;
+  let this_schema = this;
 
-  Object.defineProperty (this, "url", {value: url});
+  Object.defineProperty (this_schema, "url", {value: url});
 
-  for (entity in schema)
+  for (let entity in schema)
   {
-    Entity = function (values)
+    let Entity = function (values)
     {
-      var id;
-      var attribute;
+      let this_entity = this;
+      let id;
 
-      Object.defineProperty (this, "id", {
+      Object.defineProperty (this_entity, "id", {
         get: function () { return id; },
         set: function (value) { return id = value; }});
 
-      for (attribute of schema[entity]) {
-        (function(that, attribute) {
-          Object.defineProperty (that, attribute, {
-            enumerable: true,
-            get: function () { return values[attribute]; },
-            set: function (value) { return values[attribute] = value; }});
-        })(this, attribute);
+      for (let attribute of schema[entity]) {
+        Object.defineProperty (this_entity, attribute, {
+          enumerable: true,
+          get: function () {
+            return values[attribute];
+          },
+          set: function (value) {
+            return values[attribute] = value;
+          }});
       }
     };
     Object.defineProperty (Entity.prototype, "select", {
       value: function (condition) {
-        console.log (this);
       }});
 
-    Object.defineProperty (this, entity, {
+    Object.defineProperty (this_schema, entity, {
       enumerable: true,
       value: Entity});
   }
