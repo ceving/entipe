@@ -1,3 +1,5 @@
+"use strict";
+
 var o = {
   a: 7,
   get b() {
@@ -19,6 +21,8 @@ function dbval (entity, id, attribute, value)
 }
 
 
+var peter;
+var home;
 
 $ (function () {
   demo.query (
@@ -35,4 +39,54 @@ $ (function () {
                   );
       });
     });
+
+  peter = new demo.person({firstname: "Peter", lastname: "Pan"});
+  home = new demo.address({street: "Second to the right",
+                           locality: "Straight on till morning",
+                           country: "Neverland"});
 });
+
+function test1 () {
+    var s = {};
+    var a = {n:1, m:2};
+    var i;
+    
+    for (i in a) {
+      (function(i) {
+        s[i] = function() { this[i] = a[i]; };
+        console.log (s[i]);
+      })(i);
+    }
+    
+    var x = new s.n;
+    var y = new s.m;
+    
+    console.log (x);
+    console.log (y);
+}
+
+function test2 () {
+    x = {};
+    for (i of ['a', 'b']) {
+      (function(i) {
+        x[i] = function() { this.v = i; }
+      })(i);
+    }
+
+    y = {};
+    for (i of ['a', 'b']) {
+      y[i] = function() { this.v = i; }
+    }
+}
+
+
+var S = function(es)
+{
+  for (let e of es) {
+    this[e] = function() {
+      this.v = e;
+    }
+  }
+}
+
+var s = new S(['a', 'b']);
