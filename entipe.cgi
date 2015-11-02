@@ -225,11 +225,28 @@ sub query
   my $self = shift;
   my $sql  = shift;
 
-  my $sth = $self->{dbh}->prepare ($sql);
-  $sth->execute(@_);
-  my $result = $sth->fetchall_arrayref ({});
-  $sth->finish;
-  return $result;
+  if ($sql =~ /^\s*select\b/i) {
+    my $sth = $self->{dbh}->prepare ($sql) || die "prepare";
+    $sth->execute(@_) || die "execute";
+    my $result = $sth->fetchall_arrayref ({}) || die "fetch";
+    $sth->finish || die "finish";
+    return $result;
+  }
+  if ($sql =~ /^\s*update\b/i) {
+    my $sth = $self->{dbh}->prepare ($sql);
+    $sth->execute(@_);
+    return;
+  }
+  if ($sql =~ /^\s*insert\b/i) {
+    my $sth = $self->{dbh}->prepare ($sql);
+    $sth->execute(@_);
+    $sth->finish;
+    $sth = $self->{dbh}->prepare ('SELECT last_insert_rowid() as id');
+    $sth->execute();
+    my $result = $sth->fetchall_arrayref ({});
+    $sth->finish;
+    return $result;
+  }
 }
 
 sub disconnect
@@ -249,7 +266,7 @@ use CGI::Carp;
 use Parse::RecDescent;
 use Encode qw(decode_utf8);
 
-DEBUG->warn (\%ENV);
+#DEBUG->warn (\%ENV);
 
 DEBUG->warn (SESSION->id);
 DEBUG->warn (SESSION->id);
@@ -265,7 +282,7 @@ die "Invalid query string"
 
 my $APP = $ENV{QUERY_STRING};
 my $CFG = CFG->new("$APP.cfg");
-DEBUG->warn ($CFG);
+#DEBUG->warn ($CFG);
 
 die "Application is unknown"
     unless exists $CFG->{app}->{$APP};
@@ -300,13 +317,13 @@ if ($CFG->{app}->{$APP}->{db}->{driver} eq 'SQLite') {
 
 # JSON encoder
 
-my $JSON = JSON->new->utf8;
+my $JSON = JSON->new->utf8->allow_nonref;
 
 # Process GET request: deliver DAO objects.
 
 if ($ENV{REQUEST_METHOD} eq 'GET')
 {
-  my $url = $JSON->allow_nonref->encode ($URL);
+  my $url = $JSON->encode ($URL);
   my $schema_json = $JSON->encode ($DB->schema);
   $RESPONSE = RESPONSE->new (
     'application/javascript',
@@ -341,6 +358,7 @@ elsif ($ENV{REQUEST_METHOD} eq 'POST')
   # Query database
 
   my $data = $DB->query($sql);
+  DEBUG->warn($data);
 
   # Return response
 
