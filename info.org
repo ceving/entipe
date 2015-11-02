@@ -1,0 +1,8 @@
+#+COMMENT: -*- ispell-local-dictionary: "american" -*-
+#+LANGUAGE: en
+#+TITLE: Information
+
+** Links
+- [[http://savage.net.au/SQL/][SQL grammar]]
+
+
