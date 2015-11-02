@@ -83,7 +83,7 @@ sudo service apache2 restart
 
 Next the demo can be accessed via [[https://localhost/demo.html]].
 
-For profiling the following additional packages is required.
+For profiling the following additional package is required.
 
 #+BEGIN_SRC sh
 sudo apt-get install libdevel-nytprof-perl
