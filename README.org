@@ -67,13 +67,16 @@ authentication with PAM.
 The following configuration has been tested with Debian 8.2.
 
 #+BEGIN_SRC sh
-sudo apt-get install apache2 libapache2-mod-authnz-external 
+sudo apt-get install apache2 libapache2-mod-authnz-external
 sudo a2enmod ssl cgi
 sudo apt-get install sqlite3 libdbd-sqlite3-perl
 sudo apt-get install libjson-perl libparse-recdescent-perl
 sudo mkdir -m 755 /var/www/entipe
 sudo chown $(id -u).$(id -g) /var/www/entipe
 git clone https://github.com/ceving/entipe.git /var/www/entipe
+sudo chgrp www-data /var/www/entipe/demo.sqlite3
+sudo chgrp www-data /var/www/entipe
+sudo chmod 755 /var/www/entipe
 sudo ln -s /var/www/entipe/demo.debian.site /etc/apache2/sites-available/entipe.conf
 sudo a2ensite entipe
 sudo service apache2 restart
