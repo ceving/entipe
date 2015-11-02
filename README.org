@@ -13,7 +13,7 @@ Entipe consists of two parts: a client library written in JavaScript
 and a server.  The prototype for the reference server is implemented
 as a CGI script in Perl.  Other server implementations will follow
 after version 1.0 has been finished.  The current version number is
-$10^-6$.
+10^{-6}.
 
 An application has to load the Entipe client library and has to query
 the Entipe server for the database schema.  This can be done by two
