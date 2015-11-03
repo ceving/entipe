@@ -7,11 +7,58 @@ var Schema = function (url, schema)
 {
   let this_schema = this;
 
-  Object.defineProperty (this_schema, "url", {value: url});
+  let query = function (query, success, error) {
+    return jQuery.ajax({
+      'type': 'POST',
+      'url': url,
+      encoding: 'UTF-8',
+      'contentType': 'application/sql; charset=UTF-8',
+      'data': query,
+      'dataType': 'json',
+      'success': success,
+      'error': error});
+  };
+
+  let select = function (entity, condition, success, error) {
+    if (schema[entity]) {
+      let q = "select * from " + quote_identifier(entity);
+      if (condition)  q += condition;
+      console.debug (q);
+      query (q, success, error);
+    } else {
+      throw new Error ("Unknown entity " + entity);
+    }
+  };
+
+  let quote_string = function (string) {
+    string = String(string);
+    return "'" + string.replace(/'/g, "''") + "'";
+  };
+
+  let verify_identifier = function (identifier) {
+    identifier = String(identifier);
+    if (identifier.match(/"$/) || identifier === '__proto__') {
+      throw new Error("Unsupported identifier", identifier);
+    }
+    return identifier;
+  };
+
+  let quote_identifier = function (identifier) {
+    return '"' + identifier + '"';
+  };
+
+  this.insert = {};
+  this.select = {};
 
   for (let entity in schema)
   {
-    let attributes = schema[entity];
+    verify_identifier(entity);
+
+    let attributes = schema[entity].map(verify_identifier);
+
+    this.select[entity] = function (condition, success, error) {
+      select (entity, condition, success, error);
+    };
 
     let Entity = function (values)
     {
@@ -27,16 +74,16 @@ var Schema = function (url, schema)
         for (let a in this_entity) {
           if (state[a] == DIRTY) {
             d.push (a);
-            i.push(this_schema.quote_identifier(a));
-            v.push(this_schema.quote_string(values[a]));
+            i.push(quote_identifier(a));
+            v.push(quote_string(values[a]));
           }
         }
         let q
-            = "insert into " + this_schema.quote_identifier(entity)
+            = "insert into " + quote_identifier(entity)
             + " (" + i.join() + ")"
             + " values (" + v.join() + ")";
         console.debug ("Insert: ", q);
-        this_schema.query (
+        query (
           q,
           function(data) {
             id = data[0].id;
@@ -80,12 +127,12 @@ var Schema = function (url, schema)
             values[attribute] = value;
             if (id) {
               let q
-                  = "update " + this_schema.quote_identifier(entity)
-                  + " set " + this_schema.quote_identifier(attribute)
-                  + " = " + this_schema.quote_string(value)
+                  = "update " + quote_identifier(entity)
+                  + " set " + quote_identifier(attribute)
+                  + " = " + quote_string(value)
                   + " where id = " + this_entity.id;
               console.debug ("Update: ", q);
-              let r = this_schema.query (q, function (data) {}, undo);
+              let r = query (q, function (data) {}, undo);
               console.debug ("Result: ", r);
             }
             else
@@ -97,40 +144,6 @@ var Schema = function (url, schema)
       insert ();
     };
 
-    Object.defineProperty (Entity.prototype, "select", {
-      value: function (condition) {
-      }});
-
-    Object.defineProperty (this_schema, entity, {
-      enumerable: true,
-      value: Entity});
+    this.insert[entity] = Entity;
   }
 };
-
-Object.defineProperty (Schema.prototype, "query", {
-  value: function (query, success, error) {
-    return jQuery.ajax({
-      'type': 'POST',
-      'url': this.url,
-      encoding: 'UTF-8',
-      'contentType': 'application/sql; charset=UTF-8',
-      'data': query,
-      'dataType': 'json',
-      'success': success,
-      'error': error});
-  }});
-
-Object.defineProperty (Schema.prototype, "quote_string", {
-  value: function (string) {
-    string = String(string);
-    return "'" + string.replace(/'/g, "''") + "'";
-  }});
-
-Object.defineProperty (Schema.prototype, "quote_identifier", {
-  value: function (identifier) {
-    identifier = String(identifier);
-    if (identifier.match(/"$/)) {
-      throw new Error("Unsupported identifier", identifier);
-    }
-    return '"' + identifier + '"';
-  }});

@@ -26,8 +26,9 @@ var home;
 var xy;
 
 $ (function () {
-  demo.query (
-    "select * from person",
+  //  demo.query (
+  demo.select.person(
+    null,
     function (data) {
       $.each (data, function (key, val) {
         console.log (val.id, val.firstname, val.lastname);
@@ -41,9 +42,9 @@ $ (function () {
       });
     });
 
-  peter = new demo.person({firstname: "Peter", lastname: "Pan"});
-  home = new demo.address({street: "Second to the right",
-                           locality: "Straight on till morning",
-                           country: "Neverland"});
-  xy = new demo.person({firstname: "X", lastname: "Y"});
+  peter = new demo.insert.person({firstname: "Peter", lastname: "Pan"});
+  home = new demo.insert.address({street: "Second to the right",
+                                  locality: "Straight on till morning",
+                                  country: "Neverland"});
+  xy = new demo.insert.person({firstname: "X", lastname: "Y"});
 });

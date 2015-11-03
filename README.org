@@ -37,7 +37,7 @@ The above code will create a schema object called demo.  The schema
 object can be use to create entities.
 
 #+BEGIN_SRC javascript
-peter = new demo.person({"firstname":"Peter", "lastname":"Pan"})
+peter = new demo.insert.person({"firstname":"Peter", "lastname":"Pan"})
 -> Entity {}
 peter.firstname
 -> "Peter"
