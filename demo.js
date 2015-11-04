@@ -23,11 +23,18 @@ function dbval (entity, id, attribute, value)
 
 var peter;
 var home;
-var xy;
+
+function new_peter()
+{
+  peter = new demo.person({firstname: "Peter", lastname: "Pan"});
+  home = new demo.address({street: "Second to the right",
+                           locality: "Straight on till morning",
+                           country: "Neverland"});
+}
 
 $ (function () {
   //  demo.query (
-  demo.select.person(
+  demo.$.person(
     null,
     function (data) {
       $.each (data, function (key, val) {
@@ -42,9 +49,6 @@ $ (function () {
       });
     });
 
-  peter = new demo.insert.person({firstname: "Peter", lastname: "Pan"});
-  home = new demo.insert.address({street: "Second to the right",
-                                  locality: "Straight on till morning",
-                                  country: "Neverland"});
-  xy = new demo.insert.person({firstname: "X", lastname: "Y"});
 });
+
+function dump() { console.debug(arguments); }

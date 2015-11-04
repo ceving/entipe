@@ -3,37 +3,58 @@
 const CLEAN = 0;
 const DIRTY = 1;
 
+/**
+ * Schema
+ *
+ * @class
+ *
+ * A Schema object is virtually a database handle.  It knows all
+ * entities and attributes defined in the associated database and can
+ * be used to create a data access object for each entity.
+ *
+ * @param {string} url The URL of the Entipe server.
+ * @param {Object} schema The database schema.
+ */
 var Schema = function (url, schema)
 {
+  // Make the schema object available for all child objects.
+
   let this_schema = this;
 
-  let query = function (query, success, error) {
-    return jQuery.ajax({
-      'type': 'POST',
-      'url': url,
-      encoding: 'UTF-8',
-      'contentType': 'application/sql; charset=UTF-8',
-      'data': query,
-      'dataType': 'json',
-      'success': success,
-      'error': error});
+  // Modification journal.
+
+  let journal = [];
+  let journal_update_timeout = 3000;
+
+  // Write the journal to the database.
+
+  let flush_journal = function () {
+    if (journal.length) {
+      let transaction = 'BEGIN;';
+      for (let entry of journal) {
+        transaction += entry.statement + ';';
+      }
+      transaction += 'COMMIT;';
+      console.log ("flush_journal", transaction);
+      journal = [];
+    }
+    setTimeout (flush_journal, journal_update_timeout);
   };
 
-  let select = function (entity, condition, success, error) {
-    if (schema[entity]) {
-      let q = "select * from " + quote_identifier(entity);
-      if (condition)  q += condition;
-      console.debug (q);
-      query (q, success, error);
-    } else {
-      throw new Error ("Unknown entity " + entity);
-    }
-  };
+  // Activate the journal updates.
+
+  //setTimeout (flush_journal, journal_update_timeout);
+
+  // Quote a SQL string.
 
   let quote_string = function (string) {
     string = String(string);
     return "'" + string.replace(/'/g, "''") + "'";
   };
+
+  // Verify a SQL identifier.  This function makes sure that SQL
+  // identifiers, which would cause a colision with JavaScript
+  // identifiers, are rejected.
 
   let verify_identifier = function (identifier) {
     identifier = String(identifier);
@@ -43,12 +64,49 @@ var Schema = function (url, schema)
     return identifier;
   };
 
+  // Quote a SQL identifier.
+
   let quote_identifier = function (identifier) {
     return '"' + identifier + '"';
   };
 
-  this.insert = {};
-  this.select = {};
+  // Execute an AJAX query to the Entipe server.
+
+  let query = function (query, success, error) {
+    jQuery.ajax({
+      'type': 'POST',
+      'url': url,
+      'encoding': 'UTF-8',
+      'contentType': 'application/sql; charset=UTF-8',
+      'data': query,
+      'dataType': 'json',
+      'success': success,
+      'error': error});
+    return;
+  };
+
+  /**
+   * Execute a select query to the Entipe server and select entities
+   * of the specified type with the given condition.
+   */
+  let select = function (entity, condition, success, error) {
+    if (schema[entity]) {
+      let q = "select * from " + quote_identifier(entity);
+      if (condition)  q += " where " + condition;
+      console.debug (q);
+      query (q,
+             success,
+             error);
+    } else {
+      throw new Error ("Unknown entity " + entity);
+    }
+  };
+
+  // '$' is the name of the object, which contains for each entity a
+  // search function, which selects existing entities from the
+  // database.
+
+  this.$ = {};
 
   for (let entity in schema)
   {
@@ -56,10 +114,21 @@ var Schema = function (url, schema)
 
     let attributes = schema[entity].map(verify_identifier);
 
-    this.select[entity] = function (condition, success, error) {
+    this.$[entity] = function (condition, success, error) {
       select (entity, condition, success, error);
     };
 
+    /**
+     * Entity
+     *
+     * @class
+     *
+     * Creates a data access object for a database entity.  The
+     * attributes of the object passed to the constructor must match
+     * the attributes defined during the schema definition.
+     *
+     * @param {Object} values The attribute values.
+     */
     let Entity = function (values)
     {
       let this_entity = this;
@@ -144,6 +213,6 @@ var Schema = function (url, schema)
       insert ();
     };
 
-    this.insert[entity] = Entity;
+    this[entity] = Entity;
   }
 };

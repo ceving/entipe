@@ -101,15 +101,15 @@ apt-get install npm nodejs-legacy
 #+END_SRC
 
 This will install about 50 packages.  After that JSDoc can be
-installed using =npm=.  Today (2015/11) it is necessary to use the
-latest development version of JSDoc.
+installed using =npm=.  Today (2015/11) it is necessary to use my fork
+of JSDoc.
 
 #+BEGIN_SRC sh
-npm install -g git+https://github.com/jsdoc3/jsdoc.git
+npm install -g git+https://github.com/ceving/jsdoc.git
 #+END_SRC
 
-When the stable branch supports the new ECMAScript 6 features the
-following might be sufficient.
+When the stable branch supports the new ECMAScript 6 features and my
+changes the following might be sufficient.
 
 #+BEGIN_SRC sh
 npm install -g jsdoc
@@ -132,7 +132,7 @@ sudo apt-get remove --purge libdevel-nytprof-perl
 sudo apt-get autoremove --purge
 #+END_SRC sh
 
-** Documentation
+*** Documentation
 The following source code documentation is available.
 
 - [[http://ceving.github.io/entipe/client/][Client]]

@@ -364,7 +364,8 @@ elsif ($ENV{REQUEST_METHOD} eq 'POST')
 
   $RESPONSE = RESPONSE->new (
     'application/json',
-    $JSON->encode ($data));
+    $JSON->encode ({result => 'ok',
+                    data => $data}));
 }
 
 # Disconnect database.
@@ -373,7 +374,14 @@ $DB->disconnect;
 
 # Deliver response.
 
-print STDOUT DEBUG->warn($RESPONSE->format);
+END {
+  if ($?) {
+    $RESPONSE = RESPONSE->new (
+      'application/json',
+      $JSON->encode ({result => 'error'}));
+  }
+  print STDOUT DEBUG->warn($RESPONSE->format);
+}
 
 __DATA__
 
