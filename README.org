@@ -84,6 +84,7 @@ sudo service apache2 restart
 
 Next the demo can be accessed via [[https://localhost/demo.html]].
 
+**** Perl Profiling
 For profiling the following additional package is required.
 
 #+BEGIN_SRC sh
@@ -91,6 +92,28 @@ sudo apt-get install libdevel-nytprof-perl
 #+END_SRC
 
 But note that this installs about 15 further dependencies.
+
+**** JavaScript Documentation
+To generate the source code documentation JSDoc is required.
+
+#+BEGIN_SRC sh
+apt-get install npm nodejs-legacy
+#+END_SRC
+
+This will install about 50 packages.  After that JSDoc can be
+installed using =npm=.  Today (2015/11) it is necessary to use the
+latest development version of JSDoc.
+
+#+BEGIN_SRC sh
+npm install -g git+https://github.com/jsdoc3/jsdoc.git
+#+END_SRC
+
+When the stable branch supports the new ECMAScript 6 features the
+following might be sufficient.
+
+#+BEGIN_SRC sh
+npm install -g jsdoc
+#+END_SRC
 
 *** Uninstall
 Execute the following to uninstall the demo.  Be sure that you do not
