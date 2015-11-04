@@ -37,7 +37,7 @@ The above code will create a schema object called demo.  The schema
 object can be use to create entities.
 
 #+BEGIN_SRC javascript
-peter = new demo.insert.person({"firstname":"Peter", "lastname":"Pan"})
+peter = new demo.person({"firstname":"Peter", "lastname":"Pan"})
 -> Entity {}
 peter.firstname
 -> "Peter"
@@ -56,7 +56,7 @@ requests to reject requests the client is not allowed to query.  This
 implies all DDL statements.
 
 
-** Development Setup CGI
+** Development
 The development configuration is insecure, because all files are in
 the document root of the web server.  This means that files are
 publicly accessible though the web server.  The setup is intended only
@@ -131,3 +131,8 @@ sudo apt-get remove --purge libjson-perl libparse-recdescent-perl
 sudo apt-get remove --purge libdevel-nytprof-perl
 sudo apt-get autoremove --purge
 #+END_SRC sh
+
+** Documentation
+The following source code documentation is available.
+
+- [[http://ceving.github.io/entipe/client/][Client]]
