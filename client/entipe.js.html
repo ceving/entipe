@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: entipe.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: entipe.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+
+const CLEAN = 0;
+const DIRTY = 1;
+
+/**
+ * Schema
+ *
+ * @class
+ *
+ * A Schema object is virtually a database handle.  It knows all
+ * entities and attributes defined in the associated database and can
+ * be used to create a data access object for each entity.
+ *
+ * @param {string} url The URL of the Entipe server.
+ * @param {Object} schema The database schema.
+ */
+var Schema = function (url, schema)
+{
+  // Make the schema object available for all child objects.
+
+  let this_schema = this;
+
+  // Quote an SQL string.
+
+  let quote_string = function (string) {
+    string = String(string);
+    return "'" + string.replace(/'/g, "''") + "'";
+  };
+
+  // Verify an SQL identifier.  This function makes sure that SQL
+  // identifiers, which would cause a colision with JavaScript
+  // identifiers, are rejected.
+
+  let verify_identifier = function (identifier) {
+    identifier = String(identifier);
+    if (identifier.match(/"$/) || identifier === '__proto__') {
+      throw new Error("Unsupported identifier", identifier);
+    }
+    return identifier;
+  };
+
+  // Quote an SQL identifier.
+
+  let quote_identifier = function (identifier) {
+    return '"' + identifier + '"';
+  };
+
+  // Execute an AJAX query to the Entipe server.
+
+  let query = function (query, success, error) {
+    return jQuery.ajax({
+      'type': 'POST',
+      'url': url,
+      encoding: 'UTF-8',
+      'contentType': 'application/sql; charset=UTF-8',
+      'data': query,
+      'dataType': 'json',
+      'success': success,
+      'error': error});
+  };
+
+  /**
+   * Execute a select query to the Entipe server and select entities
+   * of the specified type with the given condition.
+   */
+  let select = function (entity, condition, success, error) {
+    if (schema[entity]) {
+      let q = "select * from " + quote_identifier(entity);
+      if (condition)  q += " where " + condition;
+      console.debug (q);
+      query (q,
+             success,
+             error);
+    } else {
+      throw new Error ("Unknown entity " + entity);
+    }
+  };
+
+  // '$' is the name of the object, which contains for each entity a
+  // search function, which selects existing entities from the
+  // database.
+
+  this.$ = {};
+
+  for (let entity in schema)
+  {
+    verify_identifier(entity);
+
+    let attributes = schema[entity].map(verify_identifier);
+
+    this.$[entity] = function (condition, success, error) {
+      select (entity, condition, success, error);
+    };
+
+    /**
+     * Entity
+     *
+     * @class
+     *
+     * Creates a data access object for a database entity.  The
+     * attributes of the object passed to the constructor must match
+     * the attributes defined during the schema definition.
+     *
+     * @param {Object} values The attribute values.
+     */
+    let Entity = function (values)
+    {
+      let this_entity = this;
+      let id;
+      let state = {};
+
+      let insert = function (undo)
+      {
+        let d = []; // dirty attributes
+        let i = []; // identfier names of dirty attributes
+        let v = []; // values of dirty attributes
+        for (let a in this_entity) {
+          if (state[a] == DIRTY) {
+            d.push (a);
+            i.push(quote_identifier(a));
+            v.push(quote_string(values[a]));
+          }
+        }
+        let q
+            = "insert into " + quote_identifier(entity)
+            + " (" + i.join() + ")"
+            + " values (" + v.join() + ")";
+        console.debug ("Insert: ", q);
+        query (
+          q,
+          function(data) {
+            id = data[0].id;
+            for (let a in d)
+              state[a] = CLEAN;
+          },
+          function() {
+            let undo_error;
+            try {
+              if (undo) undo();
+            }
+            catch (e) {
+              undo_error = e;
+              console.error ("undo failed", e);
+            }
+            finally {
+              if (undo_error)
+                throw new Error ("Insert and undo failed", undo_error);
+              else
+                throw new Error ("Insert failed");
+            }
+          });
+      };
+
+      Object.defineProperty (this_entity, "id", {
+        get: function () { return id; }});
+
+      for (let attribute of attributes) {
+        state[attribute] = DIRTY;
+        Object.defineProperty (this_entity, attribute, {
+          enumerable: true,
+          get: function () {
+            return values[attribute];
+          },
+          set: function (value) {
+            let undo;
+            {
+              let old = values[attribute];
+              undo = function() { values[attribute] = old; };
+            }
+            values[attribute] = value;
+            if (id) {
+              let q
+                  = "update " + quote_identifier(entity)
+                  + " set " + quote_identifier(attribute)
+                  + " = " + quote_string(value)
+                  + " where id = " + this_entity.id;
+              console.debug ("Update: ", q);
+              let r = query (q, function (data) {}, undo);
+              console.debug ("Result: ", r);
+            }
+            else
+              insert(undo);
+            return;
+          }});
+      }
+
+      insert ();
+    };
+
+    this[entity] = Entity;
+  }
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Schema.html">Schema</a></li><li><a href="Schema-Entity.html">Entity</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0-dev</a> on Wed Nov 04 2015 09:50:32 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
