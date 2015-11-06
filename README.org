@@ -70,8 +70,9 @@ The following configuration has been tested with Debian 8.2.
 #+BEGIN_SRC sh
 sudo apt-get install apache2 libapache2-mod-authnz-external
 sudo a2enmod ssl cgi
-sudo apt-get install sqlite3 libdbd-sqlite3-perl
-sudo apt-get install libjson-perl libparse-recdescent-perl
+sudo apt-get install sqlite3 libdbd-sqlite3-perl libjson-perl
+#sudo apt-get install libparse-recdescent-perl
+sudo cpan -i Marpa::R2
 sudo mkdir -m 775 /var/www/entipe
 sudo chown $(id -u).$(id -g) /var/www/entipe
 git clone https://github.com/ceving/entipe.git /var/www/entipe

@@ -1,0 +1,16 @@
+:default ::= action => [name,values]
+lexeme default = latm => 1
+
+<Query> ::= <Select>
+
+<abc>
+
+<Select> ::= <select> '*' <from> <identifier>
+
+<select> ~ 'SELECT':i
+<from> ~ 'FROM':i
+<identifier> ~ '"' <non_quote_chars> '"'
+<non_quote_chars> ~ [^"]+
+
+:discard ~ <whitespace>
+<whitespace> ~ [\s]+
