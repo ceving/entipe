@@ -34,7 +34,7 @@ function new_peter()
 
 $ (function () {
   //  demo.query (
-  demo.$.person(
+  demo.person.select(
     null,
     function (data) {
       $.each (data, function (key, val) {
@@ -52,16 +52,3 @@ $ (function () {
 });
 
 function dump() { console.debug(arguments); }
-
-
-function sequence (value, increment)
-{
-  if (!value) value = 0;
-  if (!increment) increment = function (value) { return value + 1; };
-
-  return function () {
-    let current = value;
-    value = increment (value);
-    return current;
-  };
-}

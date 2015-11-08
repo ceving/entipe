@@ -75,7 +75,7 @@ var Schema = function (url, schema)
   let query = function (query, success, error) {
     jQuery.ajax({
       'type': 'POST',
-      'url': url,
+      url: url,
       'encoding': 'UTF-8',
       'contentType': 'application/sql; charset=UTF-8',
       'data': query,
@@ -85,38 +85,13 @@ var Schema = function (url, schema)
     return;
   };
 
-  /**
-   * Execute a select query to the Entipe server and select entities
-   * of the specified type with the given condition.
-   */
-  let select = function (entity, condition, success, error) {
-    if (schema[entity]) {
-      let q = "select * from " + quote_identifier(entity);
-      if (condition)  q += " where " + condition;
-      console.debug (q);
-      query (q,
-             success,
-             error);
-    } else {
-      throw new Error ("Unknown entity " + entity);
-    }
-  };
-
-  // '$' is the name of the object, which contains for each entity a
-  // search function, which selects existing entities from the
-  // database.
-
-  this.$ = {};
+  // Create an entity constructor for each entity.
 
   for (let entity in schema)
   {
     verify_identifier(entity);
 
     let attributes = schema[entity].map(verify_identifier);
-
-    this.$[entity] = function (condition, success, error) {
-      select (entity, condition, success, error);
-    };
 
     /**
      * Entity
@@ -211,6 +186,27 @@ var Schema = function (url, schema)
       }
 
       insert ();
+    };
+
+    /**
+     * Insert a new entity into the database.
+     */
+    Entity.insert = function(attributes)
+    {
+      return new Entity(attributes);
+    };
+
+    /**
+     * Execute a select query to the Entipe server and select entities
+     * of the specified type with the given condition.
+     */
+    Entity.select = function (condition, success, error) {
+      let eql = "select * from " + quote_identifier(entity);
+      if (condition) eql += " where " + condition;
+      console.debug (eql);
+      query (eql,
+             success,
+             error);
     };
 
     this[entity] = Entity;
