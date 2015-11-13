@@ -30,3 +30,45 @@ table:hover td.oplus, table:hover td.ominus {
 #ende:hover .ominus {
     display: inline;
 }
+
+div.schema {
+    display: inline-block;
+    position: relative;
+    border: 1pt solid black;
+    min-width: 40em;
+    min-height: 30em;
+    overflow: hidden;
+}
+
+div.schema div.relations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+}
+
+div.relations svg.relations {
+    width: 100%;
+    height: 100%;
+    background-color: ivory;
+}
+
+table.entity {
+    background-color: #EEE;
+}
+
+table.entity caption {
+    font-weight: bold;
+    background-color: #CCC;
+    margin-bottom: 2pt;
+}
+
+table.entity caption:hover {
+    background-color: #CCF;
+}
+
+path.rel {
+    stroke-width: 1.5pt;
+}

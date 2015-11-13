@@ -52,3 +52,92 @@ $ (function () {
 });
 
 function dump() { console.debug(arguments); }
+
+function clip (value, min, max)
+{
+  return value < min ? min : value > max ? max : value;
+}
+
+function movable (bounding_box, element_to_move, element_to_select)
+{
+  let bb = $(bounding_box);
+  let em = bb.find(element_to_move);
+  let es = em.find(element_to_select);
+
+  bb = bb.get(0);
+  em = em.get(0);
+  es = es.get(0);
+
+  console.debug ('bounding box', bb);
+  console.debug ('element to move', em);
+  console.debug ('element to select', es);
+
+  if (!bb || !em || !es) return;
+
+  function start (event)
+  {
+    bb.addEventListener ("mousemove", move_within, true);
+    bb.addEventListener ("mouseup", stop_within, true);
+    bb.addEventListener ("mouseleave", leave, true);
+
+  }
+
+  function move_within (event)
+  {
+    let left = clip (em.offsetLeft + event.movementX,
+                     0, bb.clientWidth - em.offsetWidth);
+    let top  = clip (em.offsetTop  + event.movementY,
+                     0, bb.clientHeight - em.offsetHeight);
+
+    em.style.left = left + "px";
+    em.style.top  = top + "px";
+
+    event.preventDefault ();
+  }
+
+  function move_outside (event)
+  {
+    event.preventDefault ();
+  }
+
+  function leave (event)
+  {
+    if (event.target === bb) {
+      console.debug ("LEAVE", event);
+
+      bb.removeEventListener ("mousemove", move_within, true);
+      bb.removeEventListener ("mouseup", stop_within, true);
+      bb.removeEventListener ("mouseleave", leave, true);
+
+      document.addEventListener ("mousemove", move_outside, true);
+      document.addEventListener ("mouseup", stop_outside, true);
+    }
+    event.preventDefault ();
+  }
+
+  function stop_within (event)
+  {
+    bb.removeEventListener ("mousemove", move_within, true);
+    bb.removeEventListener ("mouseup", stop_within, true);
+    bb.removeEventListener ("mouseleave", leave, true);
+
+    event.preventDefault ();
+  }
+
+  function stop_outside (event)
+  {
+    document.removeEventListener ("mousemove", move_outside, true);
+    document.removeEventListener ("mouseup", stop_outside, true);
+
+    event.preventDefault ();
+  }
+
+  em.style.position = 'relative';
+  es.addEventListener ("mousedown", start, true);
+}
+
+movable ('div.schema', 'table.entity', 'caption');
+
+
+var fk1 = document.getElementById('fk1');
+
