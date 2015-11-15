@@ -31,6 +31,10 @@ table:hover td.oplus, table:hover td.ominus {
     display: inline;
 }
 
+body {
+    background-color: ivory;
+}
+
 div.schema {
     display: inline-block;
     position: relative;
@@ -52,23 +56,31 @@ div.schema div.relations {
 div.relations svg.relations {
     width: 100%;
     height: 100%;
-    background-color: ivory;
+    background-color: #FFF;
 }
 
-table.entity {
+div.entity {
+    position: absolute;
+    box-shadow: 0.2ex 0.2ex 1ex #616ca7;
     background-color: #EEE;
 }
 
+/* Sun logo color: 616ca7 */
+
 table.entity caption {
     font-weight: bold;
-    background-color: #CCC;
+    background-color: #8c9cf2;
     margin-bottom: 2pt;
 }
 
 table.entity caption:hover {
-    background-color: #CCF;
+    background-color: #93a5ff;
 }
 
 path.rel {
     stroke-width: 1.5pt;
+}
+
+table.entity th {
+    text-align: left;
 }

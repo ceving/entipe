@@ -58,86 +58,109 @@ function clip (value, min, max)
   return value < min ? min : value > max ? max : value;
 }
 
-function movable (bounding_box, element_to_move, element_to_select)
+var x;
+
+function dragable (bounding_box, element_to_move, element_to_select)
 {
   let bb = $(bounding_box);
   let em = bb.find(element_to_move);
-  let es = em.find(element_to_select);
 
   bb = bb.get(0);
-  em = em.get(0);
-  es = es.get(0);
 
-  console.debug ('bounding box', bb);
-  console.debug ('element to move', em);
-  console.debug ('element to select', es);
+  em.each (function (index, em) {
+    let es = $(em).find(element_to_select).get(0);
 
-  if (!bb || !em || !es) return;
+    console.debug ('bounding box', bb);
+    console.debug ('element to move', em);
+    console.debug ('element to select', es);
 
-  function start (event)
-  {
-    bb.addEventListener ("mousemove", move_within, true);
-    bb.addEventListener ("mouseup", stop_within, true);
-    bb.addEventListener ("mouseleave", leave, true);
+    if (!bb || !em || !es) return;
 
-  }
+    let start;
+    let move_within;
+    let move_outside;
+    let leave;
+    let stop_within;
+    let stop_outside;
 
-  function move_within (event)
-  {
-    let left = clip (em.offsetLeft + event.movementX,
-                     0, bb.clientWidth - em.offsetWidth);
-    let top  = clip (em.offsetTop  + event.movementY,
-                     0, bb.clientHeight - em.offsetHeight);
+    start = function (event)
+    {
+      bb.addEventListener ("mousemove", move_within, true);
+      bb.addEventListener ("mouseup", stop_within, true);
+      bb.addEventListener ("mouseleave", leave, true);
+    }
 
-    em.style.left = left + "px";
-    em.style.top  = top + "px";
+    move_within = function (event)
+    {
+      let left = clip (em.offsetLeft + event.movementX,
+                       0, bb.clientWidth - em.offsetWidth);
+      let top  = clip (em.offsetTop  + event.movementY,
+                       0, bb.clientHeight - em.offsetHeight);
 
-    event.preventDefault ();
-  }
+      em.style.left = left + "px";
+      em.style.top  = top + "px";
 
-  function move_outside (event)
-  {
-    event.preventDefault ();
-  }
+      fk1.pathSegList[1].x = left;
+      fk1.pathSegList[1].x2 = left - 50;
+      fk1.pathSegList[1].y = top;
+      fk1.pathSegList[1].y2 = top;
 
-  function leave (event)
-  {
-    if (event.target === bb) {
-      console.debug ("LEAVE", event);
+      event.preventDefault ();
+    }
 
+    move_outside = function (event)
+    {
+      event.preventDefault ();
+    }
+
+    leave = function (event)
+    {
+      if (event.target === bb) {
+        console.debug ("LEAVE", event);
+
+        bb.removeEventListener ("mousemove", move_within, true);
+        bb.removeEventListener ("mouseup", stop_within, true);
+        bb.removeEventListener ("mouseleave", leave, true);
+
+        document.addEventListener ("mousemove", move_outside, true);
+        document.addEventListener ("mouseup", stop_outside, true);
+      }
+      event.preventDefault ();
+    }
+
+    stop_within = function (event)
+    {
       bb.removeEventListener ("mousemove", move_within, true);
       bb.removeEventListener ("mouseup", stop_within, true);
       bb.removeEventListener ("mouseleave", leave, true);
 
-      document.addEventListener ("mousemove", move_outside, true);
-      document.addEventListener ("mouseup", stop_outside, true);
+      event.preventDefault ();
     }
-    event.preventDefault ();
-  }
 
-  function stop_within (event)
-  {
-    bb.removeEventListener ("mousemove", move_within, true);
-    bb.removeEventListener ("mouseup", stop_within, true);
-    bb.removeEventListener ("mouseleave", leave, true);
+    stop_outside = function (event)
+    {
+      document.removeEventListener ("mousemove", move_outside, true);
+      document.removeEventListener ("mouseup", stop_outside, true);
 
-    event.preventDefault ();
-  }
+      event.preventDefault ();
+    }
 
-  function stop_outside (event)
-  {
-    document.removeEventListener ("mousemove", move_outside, true);
-    document.removeEventListener ("mouseup", stop_outside, true);
-
-    event.preventDefault ();
-  }
-
-  em.style.position = 'relative';
-  es.addEventListener ("mousedown", start, true);
+//    em.style.position = 'absolute';
+    es.addEventListener ("mousedown", start, true);
+  });
 }
 
-movable ('div.schema', 'table.entity', 'caption');
-
+dragable ('div.schema', 'div.entity', 'table caption');
 
 var fk1 = document.getElementById('fk1');
 
+function svgnsuri ()
+{
+  return document.getElementsByTagName('svg')[0].namespaceURI;
+}
+
+  
+function Entity ()
+{
+  
+}

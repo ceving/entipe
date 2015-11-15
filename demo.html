@@ -26,16 +26,46 @@
         </svg>
       </div>
 
-      <table id="person1" class="entity">
-        <thead>
-          <caption>Person</caption>
-        </thead>
-        <tbody>
-          <tr><th>id</th><td>integer</td></tr>
-          <tr><th>firstname</th><td>text</td></tr>
-          <tr><th>lastname</th><td>text</td></tr>
-        </tbody>
-      </table>
+      <div class="entity" style="left:3em;top:8em">
+        <table id="Person" class="entity">
+          <thead>
+            <caption>Person</caption>
+          </thead>
+          <tbody>
+            <tr><th>id</th><td>integer</td></tr>
+            <tr><th>first_name</th><td>text</td></tr>
+            <tr><th>last_name</th><td>text</td></tr>
+            <tr><th>main_residence</th><td>integer</td></tr>
+            <tr><th>secondary_residence</th><td>integer</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="entity" style="left:25em;top:3em">
+        <table id="Address" class="entity">
+          <thead>
+            <caption>Address</caption>
+          </thead>
+          <tbody>
+            <tr><th>id</th><td>integer</td></tr>
+            <tr><th>street</th><td>text</td></tr>
+            <tr><th>location</th><td>text</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="entity" style="left:22em;top:15em">
+        <table id="AddressList" class="entity">
+          <thead>
+            <caption>AddressList</caption>
+          </thead>
+          <tbody>
+            <tr><th>id</th><td>integer</td></tr>
+            <tr><th>address</th><td>integer</td></tr>
+          </tbody>
+        </table>
+      </div>
+
     </div>bbb
 
     <span id="ende"><span contenteditable="true">Ende</span><span class="ominus">&ominus;</span></span>
