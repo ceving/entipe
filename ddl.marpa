@@ -1,0 +1,125 @@
+:default ::= action => [values]
+lexeme default = latm => 1
+
+#:default ::= action => [name, values] bless => ::lhs
+#lexeme default = action => [ start, length, value ]
+#    bless => ::name latm => 1
+
+ddl ::=
+    <create table>+
+
+<create table> ::=
+    (CREATE TABLE) identifier ('(') <table element list> (')' ';')
+    action => create_table
+
+<table element list> ::=
+    <table element>+ separator => comma
+    action => table_element_list
+
+<table element> ::=
+    <column definition>
+  | <table constraint definition>
+
+<column definition> ::=
+    identifier <data type> <column constrain list>
+    action => column_definition
+
+<column constrain list> ::=
+    <column constrain>*
+
+<column constrain> ::=
+    NOT NULL
+  | <unique specification>
+  | AUTOINCREMENT
+
+<table constraint definition> ::=
+    <unique specification> '(' <column name list> ')'
+  | <referential constraint definition>
+
+<referential constraint definition> ::=
+    FOREIGN KEY '(' <reference column list> ')' <references specification>
+
+<references specification> ::=
+    REFERENCES  identifier '(' <reference column list> ')' <referential triggered action>
+
+<referential triggered action> ::=
+<referential triggered action> ::=
+    <update rule> <delete rule>
+  | <delete rule> <update rule>
+
+<update rule> ::=
+<update rule> ::=
+    ON UPDATE <referential action>
+
+<delete rule> ::=
+<delete rule> ::=
+    ON DELETE <referential action>
+
+<reference column list> ::=
+    identifier+ separator => comma
+
+<column name list> ::=
+    identifier+ separator => comma
+
+<referential action> ::=
+    CASCADE
+  | SET NULL
+  | SET DEFAULT
+  | RESTRICT
+  | NO ACTION
+
+<unique specification> ::=
+    UNIQUE
+  | PRIMARY KEY
+
+<data type> ::=
+    INTEGER
+  | TEXT
+  | BLOB
+
+identifier ::=
+    (double_quote) non_double_quotes (double_quote) action => ::first
+  | limited_identifier action => ::first
+
+limited_identifier ~ alphabetic alphanumeric
+
+:discard ~ whitespace
+
+:discard ~ comment
+comment ~ '--' non_newline
+
+# Keywords
+
+ACTION        ~ 'action':i
+AUTOINCREMENT ~ 'autoincrement':i
+BLOB          ~ 'blob':i
+CASCADE       ~ 'cascade':i
+CREATE        ~ 'create':i
+DEFAULT       ~ 'default':i
+DELETE        ~ 'delete':i
+FOREIGN       ~ 'foreign':i
+INTEGER       ~ 'integer':i
+KEY           ~ 'key':i
+NO            ~ 'no':i
+NOT           ~ 'not':i
+NULL          ~ 'null':i
+ON            ~ 'on':i
+PRIMARY       ~ 'primary':i
+REFERENCES    ~ 'references':i
+RESTRICT      ~ 'restrict':i
+SET           ~ 'set':i
+TABLE         ~ 'table':i
+TEXT          ~ 'text':i
+UNIQUE        ~ 'unique':i
+UPDATE        ~ 'update':i
+
+# Character classes
+
+whitespace        ~ [\s]+
+comma             ~ [,]
+double_quote      ~ ["]
+non_double_quotes ~ [^"]+
+alphabetic        ~ [a-zA-Z_]
+alphanumeric      ~ [a-zA-Z0-9_]*
+non_newline       ~ [^\n]*
+

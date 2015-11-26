@@ -1,0 +1,15 @@
+$VAR1 = 'num';
+$VAR2 = [
+          'integer'
+        ];
+$VAR3 = [
+          [
+            [
+              'PRIMARY',
+              'KEY'
+            ]
+          ],
+          [
+            'AUTOINCREMENT'
+          ]
+        ];

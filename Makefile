@@ -26,3 +26,6 @@ $(CLIENT_DOC_HTML): entipe.js client.md $(DOC_BRANCH) $(CLIENT_DOC_DIR)
 
 $(DOC_BRANCH):
 	git clone `git ls-remote --get-url` --branch $@ --single-branch $@
+
+demo.ddl: demo.sqlite3
+	sqlite3 $< .schema > $@
