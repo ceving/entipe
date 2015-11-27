@@ -1,12 +1,8 @@
-:default ::= action => [values]
+:default ::= action => dump_and_exit
 lexeme default = latm => 1
 
-#:default ::= action => [name, values] bless => ::lhs
-#lexeme default = action => [ start, length, value ]
-#    bless => ::name latm => 1
-
 ddl ::=
-    <create table>+
+    <create table>+ action => ddl
 
 <create table> ::=
     (CREATE TABLE) identifier ('(') <table element list> (')' ';')
@@ -14,35 +10,37 @@ ddl ::=
 
 <table element list> ::=
     <table element>+ separator => comma
-    action => table_element_list
+    action => [values]
 
 <table element> ::=
-    <column definition>
-  | <table constraint definition>
+    <column definition> action => ::first
+  | <table constraint definition> action => ::first
 
 <column definition> ::=
     identifier <data type> <column constrain list>
     action => column_definition
 
 <column constrain list> ::=
-    <column constrain>*
+    <column constrain>* action => join_hashes
 
 <column constrain> ::=
     NOT NULL
-  | <unique specification>
-  | AUTOINCREMENT
+  | <unique specification> action => ::first
+  | AUTOINCREMENT action => autoincrement
 
 <table constraint definition> ::=
-    <unique specification> '(' <column name list> ')'
-  | <referential constraint definition>
+    <unique specification> ('(') <column name list> (')') action => table_unique_constrain
+  | <referential constraint definition> action => ::first
 
 <referential constraint definition> ::=
-    FOREIGN KEY '(' <reference column list> ')' <references specification>
+    (FOREIGN KEY '(') <reference column list> (')') <references specification>
+    action => referential_constraint_definition
 
 <references specification> ::=
-    REFERENCES  identifier '(' <reference column list> ')' <referential triggered action>
+    (REFERENCES) identifier ('(') <reference column list> (')') <referential triggered action>
+    action => reference_specification
 
-<referential triggered action> ::=
+<referential triggered action> ::= action => ::undef
 <referential triggered action> ::=
     <update rule> <delete rule>
   | <delete rule> <update rule>
@@ -56,10 +54,10 @@ ddl ::=
     ON DELETE <referential action>
 
 <reference column list> ::=
-    identifier+ separator => comma
+    identifier+ separator => comma action => [values]
 
 <column name list> ::=
-    identifier+ separator => comma
+    identifier+ separator => comma action => [values]
 
 <referential action> ::=
     CASCADE
@@ -70,12 +68,12 @@ ddl ::=
 
 <unique specification> ::=
     UNIQUE
-  | PRIMARY KEY
+  | PRIMARY KEY action => primary_key
 
 <data type> ::=
-    INTEGER
-  | TEXT
-  | BLOB
+    INTEGER action => ::first
+  | TEXT action => ::first
+  | BLOB action => ::first
 
 identifier ::=
     (double_quote) non_double_quotes (double_quote) action => ::first
