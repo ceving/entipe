@@ -27,13 +27,21 @@ sub make_hash_by_name_of
   my $hash = {};
   for my $element (@args) {
     if (ref $element eq 'HASH') {
-      $element = $element->{$child};
-      my $name = $element->{name};
-      delete $element->{name};
-      $hash->{$name} = $element;
+      if (exists $element->{$child}) {
+        $element = $element->{$child};
+        my $name = $element->{name};
+        delete $element->{name};
+        $hash->{$name} = $element;
+      }
     }
   }
   return $hash;
+}
+
+sub grep_hash_values
+{
+  my ($child, @args) = @_;
+  return map { $_->{$child} } grep {exists $_->{$child}} @args;
 }
 
 sub join_hashes
@@ -46,19 +54,79 @@ sub join_hashes
   return $jh;
 }
 
+sub unprefix_hash_keys
+{
+  my ($regex, $hash) = @_;
+  for my $key (keys %$hash) {
+    if ($key =~ $regex) {
+      $hash->{$1} = $hash->{$key};
+      delete $hash->{$key};
+    }
+  }
+  return $hash;
+}
+
+use constant NAME_OF_ID_TABLE        => ':ID';
+
+use constant NAME_OF_NUMID_COLUMN    => ':int';
+use constant NAME_OF_UUID_COLUMN     => ':uuid';
+
+use constant NAME_OF_ID_COLUMN       => ':id';
+use constant NAME_OF_LIST_COLUMN     => ':list';
+use constant NAME_OF_ELEMENT_COLUMN  => ':elem';
+
+use constant TYPE_OF_ID_COLUMN       => 'integer';
+
+use constant PREFIX_OF_LIST_TABLE    => qr/^:LIST (.+)$/;
+use constant PREFIX_OF_ELEMENT_TABLE => qr/^:ELEM (.+)$/;
+
+use constant QUOTE_OF_COLON_PREFIX   => '::';
+
 sub ddl
 {
-  my ($self, @args) = @_;
-  return make_hash_by_name_of ('table', @args);
+  my ($self, undef, @tables) = @_;
+
+  # Convert list tables to types.
+  my $lists = make_hash_by_name_of ('list', @tables);
+  my $elements = make_hash_by_name_of ('element', @tables);
+  my $entities = make_hash_by_name_of ('entity', @tables);
+
+  for my $entity (values %$entities) {
+    print Dumper $entity;
+    if (scalar @{$entity->{references}} == 0) {
+      delete $entity->{references};
+    }
+  }
+
+  # Lift columns
+  for my $entity (keys %$entities) {
+    $entities->{$entity} = $entities->{$entity}->{columns};
+  }
+
+  return $entities;
 }
 
 sub create_table
 {
-  my ($self, @args) = @_;
-  my @columns = grep {exists $_->{column}} @{$args[1]};
+  my ($self, $name, $elements) = @_;
+
+  # Ignore ID table.
+  return if $name eq &NAME_OF_ID_TABLE;
+  my $is_list;
+  my $is_list_element;
+  if ($name =~ &PREFIX_OF_LIST_TABLE) {
+    $is_list = 1;
+  }
+  elsif ($name =~ &PREFIX_OF_ELEMENT_TABLE) {
+    $is_list_element = 1;
+  }
+
+  my @columns = grep {exists $_->{column}} @$elements;
   my $columns = make_hash_by_name_of ('column', @columns);
-  my @primary_key = grep {exists $_->{primary_key}} @{$args[1]};
+
+  my @primary_key = grep {exists $_->{primary_key}} @$elements;
   @primary_key = @{$primary_key[0]->{primary_key}} if scalar @primary_key > 0;
+
   # Normalize primary key constrain.
   for my $c (keys %$columns) {
     if (defined $columns->{$c}->{constrains} &&
@@ -69,17 +137,64 @@ sub create_table
       undef $columns->{$c}->{constrains} if scalar (keys %{$columns->{$c}->{constrains}}) == 0;
     }
   }
-  my @unique = grep {exists $_->{unique}} @{$args[1]};
+
+  # Remove implicit primary key column for all but the list element
+  # helper table.
+  die "No primary key in table " if scalar @primary_key == 0;
+  if (!$is_list_element && scalar @primary_key == 1) {
+    my $p = $primary_key[0];
+    die "Primary key is called \"$p\" and not \"&NAME_OF_ID_COLUMN\" in table \"$name\""
+        unless $p eq &NAME_OF_ID_COLUMN;
+    die "Primary key type is not \"".&TYPE_OF_ID_COLUMN."\" in table \"$name\""
+        unless $columns->{$p}->{type} eq &TYPE_OF_ID_COLUMN;
+    @primary_key = ();
+    delete $columns->{$p};
+  }
+
+  # Remove undefined column constrains.
+  for my $c (keys %$columns) {
+    delete $columns->{$c}->{constrains}
+    unless (defined $columns->{$c}->{constrains} &&
+            scalar ($columns->{$c}->{constrains}) > 0);
+  }
+
+  # Convert references to types.
+  my @references = map {$_->{reference}} grep {exists $_->{reference}} @$elements;
+  my $foreign_primary;
+  @references = grep {
+    my $src = $_->{source};
+    my $dst = $_->{destination};
+    if (!$is_list_element &&
+        scalar @$src == 1 &&
+        $src->[0] eq &NAME_OF_ID_COLUMN &&
+        exists $dst->{&NAME_OF_ID_TABLE} &&
+        scalar @{$dst->{&NAME_OF_ID_TABLE}} == 1 &&
+        $dst->{&NAME_OF_ID_TABLE}->[0] eq &NAME_OF_NUMID_COLUMN) {
+      $foreign_primary = 1;
+      delete $columns->{&NAME_OF_ID_COLUMN};
+      0;
+    } else {
+      1;
+    }
+  } @references;
+  die "Table \"$name\" has no foreign primary key."
+      unless $is_list_element || $foreign_primary;
+
+  # Build table.
+  my $table = {name => $name,
+               columns => $columns,
+               references => \@references};
+
+  # Add optional unique attribute.
+  my @unique = grep {exists $_->{unique}} @$elements;
   my $unique;
   $unique = "TODO" if scalar (@unique) > 0;
-  my @references = grep {exists $_->{reference}} @{$args[1]};
-  my $references;
-  $references = [ map {$_->{reference}} @references ] if scalar (@references) > 0;
-  return {table => {name => $args[0],
-                    columns => $columns,
-                    primary_key => \@primary_key,
-                    unique => $unique,
-                    references => $references}};
+  $table->{unique} = $unique if defined $unique;
+
+  # Add optional primary key.
+  $table->{primary_key} = \@primary_key if scalar (@primary_key) > 0;
+
+  return {$is_list ? 'list' : $is_list_element ? 'element' : 'entity' => $table};
 }
 
 sub table_unique_constrain
