@@ -66,6 +66,13 @@ sub unprefix_hash_keys
   return $hash;
 }
 
+sub first_key
+{
+  my ($hashref) = @_;
+  my @keys = keys %$hashref;
+  return $keys[0];
+}
+
 use constant NAME_OF_ID_TABLE        => ':ID';
 
 use constant NAME_OF_NUMID_COLUMN    => ':int';
@@ -86,21 +93,34 @@ sub ddl
 {
   my ($self, undef, @tables) = @_;
 
-  # Convert list tables to types.
   my $lists = make_hash_by_name_of ('list', @tables);
   my $elements = make_hash_by_name_of ('element', @tables);
   my $entities = make_hash_by_name_of ('entity', @tables);
 
+  # Convert list tables to types.
   for my $entity (values %$entities) {
-    print Dumper $entity;
-    if (scalar @{$entity->{references}} == 0) {
-      delete $entity->{references};
+    for my $ref (@{$entity->{references}}) {
+      my $src = $ref->{source};
+      die "Multi-value references are not supported" if scalar @$src > 1;
+      if (scalar @$src == 1) {
+        my $col = $entity->{columns}->{$src->[0]};
+        die "Reference to non-id type" unless $col->{type} eq &TYPE_OF_ID_COLUMN;
+        my $dst = first_key $ref->{destination};
+        if ($dst =~ PREFIX_OF_LIST_TABLE) {
+          $col->{type} = {'ref*' => $1};
+        } else {
+          $col->{type} = {'ref?' => $dst};
+        }
+      }
     }
   }
 
-  # Lift columns
+  # Lift columns and column types
   for my $entity (keys %$entities) {
     $entities->{$entity} = $entities->{$entity}->{columns};
+    for my $attribute (keys %{$entities->{$entity}}) {
+      $entities->{$entity}->{$attribute} = $entities->{$entity}->{$attribute}->{type};
+    }
   }
 
   return $entities;
