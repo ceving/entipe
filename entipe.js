@@ -91,7 +91,7 @@ var Schema = function (url, schema)
   {
     verify_identifier(entity);
 
-    let attributes = schema[entity].map(verify_identifier);
+    let attributes = Object.keys(schema[entity]).map(verify_identifier);
 
     /**
      * Entity

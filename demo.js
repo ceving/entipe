@@ -26,15 +26,15 @@ var home;
 
 function new_peter()
 {
-  peter = new demo.person({firstname: "Peter", lastname: "Pan"});
-  home = new demo.address({street: "Second to the right",
+  peter = new demo.Person({firstname: "Peter", lastname: "Pan"});
+  home = new demo.Address({street: "Second to the right",
                            locality: "Straight on till morning",
                            country: "Neverland"});
 }
 
 $ (function () {
   //  demo.query (
-  demo.person.select(
+  demo.Person.select(
     null,
     function (data) {
       $.each (data, function (key, val) {
