@@ -1,5 +1,10 @@
 "use strict";
 
+function is (type, value)
+{
+  return value["constructor"] === type;
+}
+
 const CLEAN = 0;
 const DIRTY = 1;
 
