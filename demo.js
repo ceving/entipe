@@ -159,8 +159,47 @@ function svgnsuri ()
   return document.getElementsByTagName('svg')[0].namespaceURI;
 }
 
-  
-function Entity ()
+function E (name, attributes, children_)
 {
-  
+  let e = document.createElement(arguments[0]);
+  for (let name in arguments[1])
+    e.setAttribute (name, arguments[1][name]);
+  for (let i = 2; i < arguments.length; i++)
+    if (arguments[i])
+      e.appendChild (arguments[i]);
+  return e;
+}
+
+function Ea (name, attributes, children)
+{
+  return E.apply (null, [name, attributes].concat (children));
+}
+
+function T (text)
+{
+  return document.createTextNode (text);
+}
+
+
+function entity (name, left, top, attributes)
+{
+  // It might be necessary to add the schema name to the value of the
+  // id attribute of the entity to ensure uniqueness, if more than one
+  // schema is displayed in one page.
+
+  return E ('div', {'class': 'entity',
+                    'style': 'left:' + left + ';top:' + top},
+            E ('table', {'id': '.entity ' + name,
+                         'class': 'entity'},
+               E ('thead', null,
+                  E ('caption', null,
+                     T (name))),
+               Ea ('tbody', null,
+                   attributes.map (
+                     function (attr) {
+                       return E ('tr', null,
+                                 E ('th', null,
+                                    T (attr)),
+                                 E ('td', null,
+                                    T ('type')))}))));
 }
