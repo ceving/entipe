@@ -1,5 +1,5 @@
-td {
-    border: 1px solid black;
+* {
+    font-family: sans-serif;
 }
 
 .oplus, .ominus {
@@ -38,7 +38,7 @@ body {
 div.schema {
     display: inline-block;
     position: relative;
-    border: 1pt solid black;
+    border: 0.1rem solid black;
     min-width: 40em;
     min-height: 30em;
     overflow: hidden;
@@ -59,28 +59,56 @@ div.relations svg.relations {
     background-color: #FFF;
 }
 
-div.entity {
+div.schema div.entity {
     position: absolute;
-    box-shadow: 0.2ex 0.2ex 1ex #616ca7;
+    box-shadow: 0.2rem 0.25rem 0.25rem #CCC;
     background-color: #EEE;
+    border: 0.1rem solid #999;
+}
+
+div.entity table.entity {
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 0.5rem solid transparent;
 }
 
 /* Sun logo color: 616ca7 */
 
 table.entity caption {
     font-weight: bold;
-    background-color: #8c9cf2;
-    margin-bottom: 2pt;
+    color: #00A;
+    background-color: #DDD;
+    padding: 0.3rem 2rem 0.1rem 0.5rem;
+    text-align: left;
 }
 
+_table.entity caption::before {
+    content: ' ⬜ '; /* WHITE LARGE SQUARE, EN SPACE*/
+    color: #666;
+    background-color: #FFF;
+}
+
+
 table.entity caption:hover {
-    background-color: #93a5ff;
+    background-color: #FF9;
+}
+
+table.entity th {
+    padding-right: 0.5rem;
+}
+
+table.entity th, table.entity td {
+}
+
+table.entity td.type {
+    color: #090;
 }
 
 path.rel {
-    stroke-width: 1.5pt;
+    stroke-width: 0.1rem;
 }
 
 table.entity th {
     text-align: left;
+    font-weight: normal;
 }

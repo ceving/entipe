@@ -8,6 +8,8 @@ function is (type, value)
 const CLEAN = 0;
 const DIRTY = 1;
 
+var schema_json;
+
 /**
  * Schema
  *
@@ -22,6 +24,8 @@ const DIRTY = 1;
  */
 var Schema = function (url, schema)
 {
+  schema_json = schema;
+
   // Make the schema object available for all child objects.
 
   let this_schema = this;

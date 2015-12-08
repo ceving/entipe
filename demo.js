@@ -191,15 +191,23 @@ function entity (name, left, top, attributes)
                     'style': 'left:' + left + ';top:' + top},
             E ('table', {'id': '.entity ' + name,
                          'class': 'entity'},
-               E ('thead', null,
-                  E ('caption', null,
-                     T (name))),
+               E ('caption', null,
+                  T (name)),
                Ea ('tbody', null,
                    attributes.map (
                      function (attr) {
                        return E ('tr', null,
                                  E ('th', null,
                                     T (attr)),
-                                 E ('td', null,
+                                 E ('td', {'class': 'type'},
                                     T ('type')))}))));
 }
+
+function add_entity ()
+{
+  document.querySelector('div.schema').appendChild(
+    entity('X', '10em', '20em', ['A', 'B']));
+
+  dragable ('div.schema', 'div.entity', 'table caption');
+}
+
