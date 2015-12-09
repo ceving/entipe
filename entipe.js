@@ -9,6 +9,7 @@ const CLEAN = 0;
 const DIRTY = 1;
 
 var schema_json;
+var schema_url;
 
 /**
  * Schema
@@ -25,6 +26,7 @@ var schema_json;
 var Schema = function (url, schema)
 {
   schema_json = schema;
+  schema_url = url;
 
   // Make the schema object available for all child objects.
 

@@ -230,20 +230,20 @@ sub ddl
         die "Reference to non-id type" unless $col->{type} eq &TYPE_OF_ID_COLUMN;
         my $dst = first_key $ref->{destination};
         if ($dst =~ PREFIX_OF_LIST_TABLE) {
-          $col->{type} = {'ref*' => $1};
+          $col->{cardinality} = '*';
+          $col->{referee} = $1;
         } else {
-          $col->{type} = {'ref?' => $dst};
+          $col->{cardinality} = '?';
+          $col->{referee} = $dst;
         }
+        $col->{type} = 'reference';
       }
     }
   }
 
-  # Lift columns and column types
+  # Lift columns
   for my $entity (keys %$entities) {
     $entities->{$entity} = $entities->{$entity}->{columns};
-    for my $attribute (keys %{$entities->{$entity}}) {
-      $entities->{$entity}->{$attribute} = $entities->{$entity}->{$attribute}->{type};
-    }
   }
 
   return $entities;
@@ -650,7 +650,7 @@ elsif ($ENV{REQUEST_METHOD} eq 'POST')
   # Must constraints
 
   die "Content is not UTF-8 encoded SQL"
-      unless $ENV{CONTENT_TYPE} =~ m{application/sql;[ ]+charset=utf-8}i;
+      unless $ENV{CONTENT_TYPE} =~ m{application/sql;[ ]*charset=utf-8}i;
   die "Content length is not numeric"
       unless $ENV{CONTENT_LENGTH} =~ /^\d+$/;
 
