@@ -1,4 +1,4 @@
-* {
+body {
     font-family: sans-serif;
 }
 
@@ -69,16 +69,17 @@ div.schema div.entity {
 div.entity table.entity {
     border-collapse: separate;
     border-spacing: 0;
-    border: 0.5rem solid transparent;
+    border: 0.25rem solid transparent;
 }
 
 /* Sun logo color: 616ca7 */
 
 table.entity caption {
     font-weight: bold;
+    font-size: 120%;
     color: #00A;
     background-color: #DDD;
-    padding: 0.3rem 2rem 0.1rem 0.5rem;
+    padding: 0.3rem 2em 0.1rem 0.25rem;
     text-align: left;
 }
 
@@ -88,20 +89,56 @@ _table.entity caption::before {
     background-color: #FFF;
 }
 
+table.entity tr:nth-child(even) {
+/*    background-color: rgba(0,0,0,0.02); */
+}
+
+[contenteditable="true"] {
+    padding: 0 0.25rem;
+    display: inline-block;
+    min-width: 5em;
+}
+
+[contenteditable="true"]:hover {
+    cursor: text;
+}
+
+[contenteditable="true"]:focus {
+    background-color: #FFF;
+}
 
 table.entity caption:hover {
-    background-color: #FF9;
+    /*    background-color: #FF9;*/
+    cursor: move;
 }
 
-table.entity th {
-    padding-right: 0.5rem;
+table.entity caption {
+    position: relative;
 }
 
-table.entity th, table.entity td {
+table.entity caption::after {
+    display: none;
+    position: absolute;
+    right: 0.5em;
+    content: '◀';
+    color: #999;
+}
+
+table.entity:hover caption::after {
+    display: inline-block;
+}
+
+table.entity caption:hover::after {
+    cursor: pointer;
 }
 
 table.entity td.type {
     color: #090;
+    padding: 0 0.25rem;
+}
+
+table.entity td.type * {
+    color: inherit;
 }
 
 path.rel {
@@ -111,4 +148,32 @@ path.rel {
 table.entity th {
     text-align: left;
     font-weight: normal;
+}
+
+svg line, svg path {
+    stroke: #000;
+    stroke-width: 0.1rem;
+    vector-effect: non-scaling-stroke;
+}
+
+svg.icon {
+    display: inline-block;
+/*    height: 15ex;
+    width: 15ex;*/
+    height: 2.15ex;
+    width: 2.15ex;
+/*    background-color: yellow;*/
+    vertical-align: top;
+}
+
+svg.icon line {
+    stroke: #999;
+}
+
+table.entity svg.icon.move {
+    display: none;
+}
+
+table.entity:hover svg.icon.move {
+    display: inline-block;
 }

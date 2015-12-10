@@ -10,7 +10,6 @@ var o = {
   }
 };
 
-
 var peter;
 var home;
 
@@ -22,10 +21,7 @@ function new_peter()
                            country: "Neverland"});
 }
 
-
-
 var x;
-
 
 var fk1 = document.getElementById('fk1');
 
@@ -33,7 +29,6 @@ function svgnsuri ()
 {
   return document.getElementsByTagName('svg')[0].namespaceURI;
 }
-
 
 function entity (name, left, top, attributes)
 {
@@ -62,17 +57,45 @@ function add_entity ()
   document.querySelector('div.schema').appendChild(
     entity('X', '10em', '20em', ['A', 'B']));
 
-  dragable ('div.schema', 'div.entity', 'table caption');
+  //dragable ('div.schema', 'div.entity', 'table caption');
 }
 
 
 var Schema1;
+var Schema2;
+
 
 (function () {
+  var schemas = new WeakMap();
+
+  Schema2 = function () {
+    schemas.set (this, {entities: new Map ()});}
+
+  Schema2.prototype.defined =
+    function (entity_name, attribute_name) {
+      var schema = schemas.get (this);
+      if (schema)
+        if (entity_name) {
+          var entity = schema.entities.get (entity_name);
+          if (entity)
+            if (attribute_name)
+              return entity.has (attribute_name);
+            else
+              return true; }
+      return false; };
+
+  Schema2.prototype.define = function (entity_name, attributes) {
+    var schema = schemas.get (this);
+    var entity = new Map ();
+    schema.entities.set (entity_name, entity);
+    for (let attribute_name in attributes) {
+//      let attribute_definition = 
+      let attribute = {type: attributes[attribute_name].type};
+      entity.set (attribute_name, attribute);}};
+
   Schema1 = function (url, schema_definition)
   {
-    let schema = this;
-    schema.entity = new Map();
+    this.entity = new Map();
 
     for (let entity_name in schema_definition)
     {
@@ -104,7 +127,7 @@ var Schema1;
                 let value = this;
 
                 value.value = initial_value;
-              }
+              };
               break;
             default:
               throw "Unsupported value type: " + attribute_definition.type;
@@ -126,6 +149,11 @@ function schema1 ()
   return new Schema1 (schema_url, schema_json);
 }
 
+function schema2 ()
+{
+  return new Schema2 (schema_url, schema_json);
+}
+
 function query (sql, cont)
 {
   var r = new XMLHttpRequest();
@@ -139,3 +167,21 @@ function query (sql, cont)
   };
   r.send (sql);
 }
+
+
+
+function hide (element) {
+  element.style.display = 'none'; }
+
+function show (element) {
+  element.style.display = ''; }
+
+function foreach (query, action) {
+  var elements = document.querySelectorAll (query);
+  var i = 0;
+  for (; i < elements.length; ++i)
+    action (elements[i]); }
+
+function hover (element, enter, leave) {
+  element.addEventListener ('mouseenter', enter);
+  element.addEventListener ('mouseenter', leave); }

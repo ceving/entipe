@@ -22,21 +22,121 @@
     aaa<div class="schema">
       <div class="relations">
         <svg class="relations">
-          <path id="fk1" class="rel" d="M 0 0 C 50 0, 50 100, 100 100" stroke="black" fill="transparent"/>
+          <path id="fk1" class="rel" d="M 0 0 C 50 0, 50 100, 100 100" fill="transparent"/>
         </svg>
       </div>
 
       <div class="entity" style="left:3em;top:8em">
         <table id="Person" class="entity">
-          <caption>Person</caption>
+          <caption><span contenteditable="true">Person</span><svg class="icon move" viewBox="0 0 100 100">
+              <line x1="50"  y1="0"   x2="50"  y2="100"/>
+              <line x1="50"  y1="0"   x2="40"  y2="30"/>
+              <line x1="50"  y1="0"   x2="60"  y2="30"/>
+              <line x1="50"  y1="100" x2="40"  y2="70"/>
+              <line x1="50"  y1="100" x2="60"  y2="70"/>
+              <line x1="0"   y1="50"  x2="100" y2="50"/>
+              <line x1="0"   y1="50"  x2="30"  y2="40"/>
+              <line x1="0"   y1="50"  x2="30"  y2="60"/>
+              <line x1="100" y1="50"  x2="70"  y2="40"/>
+              <line x1="100" y1="50"  x2="70"  y2="60"/>
+          </svg></caption>
+          <colgroup>
+            <col class="name">
+            <col class="detail" span="2">
+          </colgroup>
           <thead>
           </thead>
           <tbody>
-            <tr><th>id</th><td class="type">integer</td></tr>
-            <tr><th>first_name</th><td class="type">text</td></tr>
-            <tr><th>last_name</th><td class="type">text</td></tr>
-            <tr><th>main_residence</th><td class="type">integer</td></tr>
-            <tr><th>secondary_residence</th><td class="type">integer</td></tr>
+            <tr>
+              <th contenteditable="true">id</th>
+              <td class="type">
+                <select>
+                  <option>String</option>
+                  <option selected>Number</option>
+                  <option>Reference</option>
+                </select>
+              </td>
+              <td class="card">
+                <select>
+                  <option selected>1</option>
+                  <option>0..1</option>
+                  <option>1..&infin;</option>
+                  <option>0..&infin;</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <th contenteditable="true">first_name</th>
+              <td class="type">
+                <select>
+                  <option selected>String</option>
+                  <option>Number</option>
+                  <option>Reference</option>
+                </select>
+              </td>
+              <td class="card">
+                <select>
+                  <option selected>1</option>
+                  <option>0..1</option>
+                  <option>1..&infin;</option>
+                  <option>0..&infin;</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <th contenteditable="true">last_name</th>
+              <td class="type">
+                <select>
+                  <option selected>String</option>
+                  <option>Number</option>
+                  <option>Reference</option>
+                </select>
+              </td>
+              <td class="card">
+                <select>
+                  <option selected>1</option>
+                  <option>0..1</option>
+                  <option>1..&infin;</option>
+                  <option>0..&infin;</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <th contenteditable="true">main_residence</th>
+              <td class="type">
+                <select>
+                  <option>String</option>
+                  <option>Number</option>
+                  <option selected>Reference</option>
+                </select>
+              </td>
+              <td class="card">
+                <select>
+                  <option>1</option>
+                  <option selected>0..1</option>
+                  <option>1..&infin;</option>
+                  <option>0..&infin;</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <th contenteditable="true">secondary_residence</th>
+              <td class="type">
+                <select>
+                  <option>String</option>
+                  <option>Number</option>
+                  <option selected>Reference</option>
+                </select>
+              </td>
+              <td class="card">
+                <select>
+                  <option>1</option>
+                  <option>0..1</option>
+                  <option>1..&infin;</option>
+                  <option selected>0..&infin;</option>
+                </select>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -47,21 +147,21 @@
           <thead>
           </thead>
           <tbody>
-            <tr><th>id</th><td class="type">integer</td></tr>
-            <tr><th>street</th><td class="type">text</td></tr>
-            <tr><th>location</th><td class="type">text</td></tr>
+            <tr><th>id</th><td class="type">Number</td></tr>
+            <tr><th>street</th><td class="type">String</td></tr>
+            <tr><th>location</th><td class="type">String</td></tr>
           </tbody>
         </table>
       </div>
 
       <div class="entity" style="left:22em;top:15em">
         <table id="AddressList" class="entity">
-          <caption>AddressList</caption>
+          <caption><span contenteditable="true">AddressList</span></caption>
           <thead>
           </thead>
           <tbody>
-            <tr><th>id</th><td class="type" class="type">integer</td></tr>
-            <tr><th>address</th><td class="type">integer</td></tr>
+            <tr><th>id</th><td class="type" class="type">Number</td></tr>
+            <tr><th>address</th><td class="type">Number</td></tr>
           </tbody>
         </table>
       </div>
