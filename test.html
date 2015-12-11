@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
+  </head>
+  <body>
+    <h1>
+      <span class="movable">ABC</span>
+    </h1>
+    <p>abc</p>
+    <h2>
+      <span class="movable">DEF</span>
+    </h2>
+    <p>def</p>
+    <template id="move-icon">
+      <svg width="0.7em" height="0.7em"
+           viewBox="0 0 10 10"
+           style="display: inline-block; vertical-align: baseline">
+        <defs>
+          <marker id="arrow-end-marker"
+                  viewBox="0 0 10 10" refX="0" refY="5"
+                  markerHeight="3"
+                  orient="auto">
+            <polygon points="0 0 10 5 0 10" />
+	  </marker>
+        </defs>
+        <line x1="5" y1="5" x2="5" y2="7"
+              stroke="black" stroke-width="0.03em"
+              marker-end="url(#arrow-end-marker)" />
+        <line x1="5" y1="5" x2="3" y2="5"
+              stroke="black" stroke-width="0.03em"
+              marker-end="url(#arrow-end-marker)" />
+        <line x1="5" y1="5" x2="5" y2="3"
+              stroke="black" stroke-width="0.03em"
+              marker-end="url(#arrow-end-marker)" />
+        <line x1="5" y1="5" x2="7" y2="5"
+              stroke="black" stroke-width="0.03em"
+              marker-end="url(#arrow-end-marker)" />
+      </svg>
+    </template>
+    <script>
+      (function() {
+         var icon = document.querySelector('#move-icon');
+         var spans = document.querySelectorAll('span.movable');
+         for (var i = 0; i < spans.length; i += 1)
+           spans[i].parentNode.appendChild (icon.content.cloneNode(true));
+       })();
+    </script>
+  </body>
+</html>

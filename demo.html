@@ -7,6 +7,26 @@
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
   </head>
   <body>
+    <h1>
+      <span>ABC</span>
+      <svg id="move-icon"
+           width="0.725em" height="0.725em"
+           viewBox="0 0 10 10"
+           style="display: inline-block; vertical-align: baseline">
+        <defs>
+          <marker id="arrow-end-marker"
+                  viewBox="0 0 10 10" refX="0" refY="5"
+                  markerHeight="1.8"
+                  orient="auto">
+            <polygon points="0 0 10 5 0 10" />
+	  </marker>
+        </defs>
+        <line x1="5" y1="5" x2="5" y2="7" marker-end="url(#arrow-end-marker)" />
+        <line x1="5" y1="5" x2="3" y2="5" marker-end="url(#arrow-end-marker)" />
+        <line x1="5" y1="5" x2="5" y2="3" marker-end="url(#arrow-end-marker)" />
+        <line x1="5" y1="5" x2="7" y2="5" marker-end="url(#arrow-end-marker)" />
+      </svg>
+    </h1>
     <h1>entipe</h1>
     <table id="person">
       <thead>

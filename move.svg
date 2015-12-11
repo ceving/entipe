@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     id="move-icon"
+     width="0.7em" height="0.7em"
+     viewBox="0 0 10 10"
+     style="display: inline-block; vertical-align: baseline">
+  <defs>
+    <marker id="arrow-end-marker"
+            viewBox="0 0 10 10" refX="0" refY="5"
+            markerHeight="3"
+            orient="auto">
+      <polygon points="0 0 10 5 0 10" />
+    </marker>
+  </defs>
+  <line x1="5" y1="5" x2="5" y2="7"
+        stroke="black" stroke-width="0.03em"
+        marker-end="url(#arrow-end-marker)" />
+  <line x1="5" y1="5" x2="3" y2="5"
+        stroke="black" stroke-width="0.03em"
+        marker-end="url(#arrow-end-marker)" />
+  <line x1="5" y1="5" x2="5" y2="3"
+        stroke="black" stroke-width="0.03em"
+        marker-end="url(#arrow-end-marker)" />
+  <line x1="5" y1="5" x2="7" y2="5"
+        stroke="black" stroke-width="0.03em"
+        marker-end="url(#arrow-end-marker)" />
+</svg>

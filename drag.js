@@ -30,9 +30,11 @@ function dragable (bounding_box, element_to_move, element_to_select)
 
     start = function (event)
     {
-      bb.addEventListener ("mousemove", move_within, true);
-      bb.addEventListener ("mouseup", stop_within, true);
-      bb.addEventListener ("mouseleave", leave, true);
+      if (event.which == 1) {
+        bb.addEventListener ("mousemove", move_within, true);
+        bb.addEventListener ("mouseup", stop_within, true);
+        bb.addEventListener ("mouseleave", leave, true);
+      }
     }
 
     move_within = function (event)
