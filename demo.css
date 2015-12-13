@@ -79,7 +79,7 @@ table.entity caption {
     font-size: 120%;
     color: #00A;
     background-color: #DDD;
-    padding: 0.3rem 2em 0.1rem 0.25rem;
+    padding: 0.3rem 0.25rem 0.1rem 0.25rem;
     text-align: left;
 }
 
@@ -112,23 +112,28 @@ table.entity caption:hover {
     cursor: move;
 }
 
-table.entity caption {
-    position: relative;
+table.entity caption span {
+    display: table-cell;
+    width: 100%;
 }
 
-table.entity caption::after {
-    display: none;
-    position: absolute;
-    right: 0.5em;
-    content: '◀';
+table.entity caption span:last-of-type {
+    border-right: 2em solid;
+}
+
+table.entity caption span:last-of-type {
     color: #999;
+    padding: 0 0.25rem;
+    margin-left: 1rem;
+    font-size: 90%;
+    visibility: hidden;
 }
 
-table.entity:hover caption::after {
-    display: inline-block;
+table.entity:hover caption span:last-of-type {
+    visibility: visible;
 }
 
-table.entity caption:hover::after {
+table.entity caption:hover span:last-of-type {
     cursor: pointer;
 }
 
