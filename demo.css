@@ -114,11 +114,11 @@ table.entity caption:hover {
 
 table.entity caption span {
     display: table-cell;
-    width: 100%;
 }
 
-table.entity caption span:last-of-type {
-    border-right: 2em solid;
+table.entity caption span.move {
+    width: 100%;
+    min-width: 2rem;
 }
 
 table.entity caption span:last-of-type {

@@ -170,18 +170,38 @@ function query (sql, cont)
 
 
 
-function hide (element) {
-  element.style.display = 'none'; }
+function hide (element)
+{
+  element.style.display = 'none';
+}
 
-function show (element) {
-  element.style.display = ''; }
+function show (element)
+{
+  element.style.display = '';
+}
 
-function foreach (query, action) {
+function foreach (query, action)
+{
   var elements = document.querySelectorAll (query);
   var i = 0;
   for (; i < elements.length; ++i)
-    action (elements[i]); }
+    action (elements[i]);
+}
 
-function hover (element, enter, leave) {
+function hover (element, enter, leave)
+{
   element.addEventListener ('mouseenter', enter);
-  element.addEventListener ('mouseenter', leave); }
+  element.addEventListener ('mouseenter', leave);
+}
+
+function collapse_entities ()
+{
+  foreach ('table.entity td', hide);
+}
+
+function expand_entities ()
+{
+  foreach ('table.entity td', show);
+}
+
+  
