@@ -180,28 +180,61 @@ function show (element)
   element.style.display = '';
 }
 
-function foreach (query, action)
+function foreach (query, action, base)
 {
-  var elements = document.querySelectorAll (query);
-  var i = 0;
-  for (; i < elements.length; ++i)
+  if (!base) base = document;
+  var elements = base.querySelectorAll (query);
+  for (var i = 0; i < elements.length; ++i)
     action (elements[i]);
 }
 
 function hover (element, enter, leave)
 {
-  element.addEventListener ('mouseenter', enter);
-  element.addEventListener ('mouseenter', leave);
+  if (enter)
+    element.addEventListener ('mouseenter', enter);
+  if (leave)
+    element.addEventListener ('mouseenter', leave);
 }
 
-function collapse_entities ()
+function togglable (element, text1, action1, text2, action2)
 {
-  foreach ('table.entity td', hide);
+  var first = true;
+  element.innerHTML = text1;
+  element.addEventListener ('click', function () {
+    if (first) {
+      element.innerHTML = text2;
+      setTimeout (action1, 0); }
+    else {
+      element.innerHTML = text1;
+      setTimeout (action2, 0); }
+    first = !first;
+  }, false);
 }
 
-function expand_entities ()
+togglable (document.getElementById ('toggle-detail'),
+           '&#9664;', function () { foreach ('.entity table td', hide); },
+           '&#9654;', function () { foreach ('.entity table td', show); });
+
+foreach ('#modeler .entity',
+         function (element) {
+           hover (element,
+                  function (event) {
+                    var zmax = 0;
+                    foreach ('#modeler .entity',
+                             function (element) {
+                               var z = parseInt(element.style.zIndex);
+                               if (z > zmax) zmax = z;
+                               if (element === event.target)
+                                 setTimeout (function () {
+                                   element.style.zIndex = isNaN(zmax) ? 1 : zmax + 1;
+                                 }, 0);})})});
+
+var references = new WeakMap();
+
+function reference (src_entity, src_attribute, dst_entity, dst_attribute)
 {
-  foreach ('table.entity td', show);
+//  var src = document.getElementById(src_entity).querySelector('th');
 }
 
-  
+
+reference ('Person', 'main_residence', 'Address', 'id');

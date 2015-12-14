@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>entipe</title>
     <link rel="stylesheet" type="text/css" href="demo.css">
+    <link rel="stylesheet" type="text/css" href="test.css">
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
   </head>
   <body>
@@ -39,24 +40,24 @@
       </tfoot>
     </table>
 
-    aaa<div class="schema">
-      <div class="relations">
-        <svg class="relations">
-          <path id="fk1" class="rel" d="M 0 0 C 50 0, 50 100, 100 100" fill="transparent"/>
-        </svg>
-      </div>
+    aaa<div id="modeler">
+      <ul class="toolbar">
+        <li id="toggle-detail">
+        <li>?
+      </ul>
+      <div class="canvas">
+        <div class="relations">
+          <svg>
+            <path id="fk1" class="rel" d="M 0 0 C 50 0, 50 100, 100 100" fill="transparent"/>
+          </svg>
+        </div>
 
       <div class="entity" style="left:3em;top:8em">
-        <table id="Person" class="entity">
-          <caption><span contenteditable="true">Person</span><span class="move"></span><span>&#9664;</span></caption>
-          <colgroup>
-            <col class="name">
-            <col class="detail" span="2">
-          </colgroup>
-          <thead>
-          </thead>
+        <table data-id="Person">
+          <caption><span class="anchor" onselectstart="return false;">&#8803;</span><span contenteditable="true">Person</span><span class="hfill"></span><span>&#9664;</span></caption>
           <tbody>
             <tr>
+              <td class="anchor" onselectstart="return false;">&#9679;</td>
               <th contenteditable="true">id</th>
               <td class="type">
                 <select>
@@ -75,7 +76,27 @@
               </td>
             </tr>
             <tr>
-              <th contenteditable="true">first_name</th>
+              <td class="anchor">&#9679;&#9675;</td>
+              <th contenteditable="true">given name</th>
+              <td class="type">
+                <select>
+                  <option selected>String</option>
+                  <option>Number</option>
+                  <option>Reference</option>
+                </select>
+              </td>
+              <td class="card">
+                <select>
+                  <option>1</option>
+                  <option>0..1</option>
+                  <option selected>1..&infin;</option>
+                  <option>0..&infin;</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td class="anchor">&#9679;</td>
+              <th contenteditable="true">surname</th>
               <td class="type">
                 <select>
                   <option selected>String</option>
@@ -93,24 +114,7 @@
               </td>
             </tr>
             <tr>
-              <th contenteditable="true">last_name</th>
-              <td class="type">
-                <select>
-                  <option selected>String</option>
-                  <option>Number</option>
-                  <option>Reference</option>
-                </select>
-              </td>
-              <td class="card">
-                <select>
-                  <option selected>1</option>
-                  <option>0..1</option>
-                  <option>1..&infin;</option>
-                  <option>0..&infin;</option>
-                </select>
-              </td>
-            </tr>
-            <tr>
+              <td class="anchor">&#9675;</td>
               <th contenteditable="true">main_residence</th>
               <td class="type">
                 <select>
@@ -129,6 +133,7 @@
               </td>
             </tr>
             <tr>
+              <td class="anchor">&#9675;&#9675;</td>
               <th contenteditable="true">secondary_residence</th>
               <td class="type">
                 <select>
@@ -151,10 +156,8 @@
       </div>
 
       <div class="entity" style="left:25em;top:3em">
-        <table id="Address" class="entity">
-          <caption><span contenteditable="true">Address</span><span class="move"></span><span>&#9664;</span></caption>
-          <thead>
-          </thead>
+        <table data-id="Address">
+          <caption><span contenteditable="true">Address</span><span class="hfill"></span><span>&#9664;</span></caption>
           <tbody>
             <tr><th>id</th><td class="type">Number</td></tr>
             <tr><th>street</th><td class="type">String</td></tr>
@@ -164,10 +167,8 @@
       </div>
 
       <div class="entity" style="left:22em;top:15em">
-        <table id="AddressList" class="entity">
-          <caption><span contenteditable="true">AddressList</span><span class="move"></span><span>&#9664;</span></caption>
-          <thead>
-          </thead>
+        <table data-id="AddressList">
+          <caption><span contenteditable="true">AddressList</span><span class="hfill"></span><span>&#9664;</span></caption>
           <tbody>
             <tr><th>id</th><td class="type" class="type">Number</td></tr>
             <tr><th>address</th><td class="type">Number</td></tr>
@@ -175,6 +176,7 @@
         </table>
       </div>
 
+      </div>
     </div>bbb
 
     <span id="ende"><span contenteditable="true">Ende</span><span class="ominus">&ominus;</span></span>

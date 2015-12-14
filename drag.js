@@ -97,4 +97,4 @@ function dragable (bounding_box, element_to_move, element_to_select)
   });
 }
 
-dragable ('div.schema', 'div.entity', 'table caption');
+dragable ('#modeler', '.entity', 'table caption .hfill');

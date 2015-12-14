@@ -23,10 +23,6 @@ table:hover td.oplus, table:hover td.ominus {
     display: table-cell;
 }
 
-.anchor {
-    display: none;
-}
-
 #ende:hover .ominus {
     display: inline;
 }
@@ -35,38 +31,62 @@ body {
     background-color: ivory;
 }
 
-div.schema {
+#modeler {
     display: inline-block;
-    position: relative;
     border: 0.1rem solid black;
+    background-color: #DDD;
+}
+
+#modeler .toolbar {
+    display: table;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+}
+
+#modeler .toolbar li {
+    display: table-cell;
+    border: 0.5rem solid transparent;
+}
+
+#modeler .toolbar li:hover {
+    background-color: #EEE;
+}
+
+#modeler .canvas {
+    position: relative;
     min-width: 40em;
     min-height: 30em;
     overflow: hidden;
 }
 
-div.schema div.relations {
+#modeler .relations {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: -1;
-}
-
-div.relations svg.relations {
-    width: 100%;
-    height: 100%;
     background-color: #FFF;
 }
 
-div.schema div.entity {
+#modeler .relations svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* The caption of a table is not part of the table (by the means of
+box-shadow).  In order to give both the table and the caption a
+box-shadow it is necessary to put the table in a div. */
+
+#modeler .entity {
     position: absolute;
     box-shadow: 0.2rem 0.25rem 0.25rem #CCC;
     background-color: #EEE;
     border: 0.1rem solid #999;
+    z-index: 0;
 }
 
-div.entity table.entity {
+#modeler .entity table {
     border-collapse: separate;
     border-spacing: 0;
     border: 0.25rem solid transparent;
@@ -74,9 +94,8 @@ div.entity table.entity {
 
 /* Sun logo color: 616ca7 */
 
-table.entity caption {
+#modeler .entity table caption {
     font-weight: bold;
-    font-size: 120%;
     color: #00A;
     background-color: #DDD;
     padding: 0.3rem 0.25rem 0.1rem 0.25rem;
@@ -89,39 +108,39 @@ _table.entity caption::before {
     background-color: #FFF;
 }
 
-table.entity tr:nth-child(even) {
+.entity table tr:nth-child(even) {
 /*    background-color: rgba(0,0,0,0.02); */
 }
 
-[contenteditable="true"] {
+#modeler [contenteditable="true"] {
     padding: 0 0.25rem;
     display: inline-block;
     min-width: 5em;
 }
 
-[contenteditable="true"]:hover {
+#modeler [contenteditable="true"]:hover {
     cursor: text;
 }
 
-[contenteditable="true"]:focus {
+#modeler [contenteditable="true"]:focus {
     background-color: #FFF;
 }
 
-table.entity caption:hover {
+#modeler .entity table caption:hover {
     /*    background-color: #FF9;*/
     cursor: move;
 }
 
-table.entity caption span {
+#modeler .entity table caption span {
     display: table-cell;
 }
 
-table.entity caption span.move {
+#modeler .entity table caption span.hfill {
     width: 100%;
     min-width: 2rem;
 }
 
-table.entity caption span:last-of-type {
+#modeler .entity table caption span:last-of-type {
     color: #999;
     padding: 0 0.25rem;
     margin-left: 1rem;
@@ -129,20 +148,27 @@ table.entity caption span:last-of-type {
     visibility: hidden;
 }
 
-table.entity:hover caption span:last-of-type {
+#modeler .entity table:hover caption span:last-of-type {
     visibility: visible;
 }
 
-table.entity caption:hover span:last-of-type {
+#modeler .entity table caption:hover span:last-of-type {
     cursor: pointer;
 }
 
-table.entity td.type {
+#modeler .entity table .anchor {
+    color: #999;
+    min-width: 1rem;
+    letter-spacing: -0.25em;
+    cursor: move;
+}
+
+#modeler .entity table td.type {
     color: #090;
     padding: 0 0.25rem;
 }
 
-table.entity td.type * {
+#modeler .entity table td.type * {
     color: inherit;
 }
 
@@ -150,7 +176,7 @@ path.rel {
     stroke-width: 0.1rem;
 }
 
-table.entity th {
+#modeler .entity table th {
     text-align: left;
     font-weight: normal;
 }
@@ -175,10 +201,10 @@ svg.icon line {
     stroke: #999;
 }
 
-table.entity svg.icon.move {
+#modeler .entity table svg.icon.move {
     display: none;
 }
 
-table.entity:hover svg.icon.move {
+#modeler .entity table:hover svg.icon.move {
     display: inline-block;
 }
