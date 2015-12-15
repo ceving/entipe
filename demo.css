@@ -163,6 +163,14 @@ _table.entity caption::before {
     cursor: move;
 }
 
+#modeler .entity select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #EEE;
+    border: none;
+}
+
 #modeler .entity table td.type {
     color: #090;
     padding: 0 0.25rem;
