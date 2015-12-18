@@ -231,10 +231,94 @@ foreach ('#modeler .entity',
 
 var references = new WeakMap();
 
-function reference (src_entity, src_attribute, dst_entity, dst_attribute)
+
+var array = [];
+
+(function () {
+  var shadow = [];
+
+  Object.defineProperty (array, 0, {
+    get: function() { return 42; },
+    set: function(value) { shadow[0] = value; }
+  })
+})();
+
+//
+// Poor man's prepare for querySelector.
+//
+// Example:
+//   var query = prepare ('#modeler table[data-id=?] tr[data-id=?]');
+//   query[0] = entity;
+//   query[1] = attribute;
+//   var src = document.querySelector(query);
+//
+var prepare;
 {
-//  var src = document.getElementById(src_entity).querySelector('th');
+  let r = /^([^?]+)\?(.+)$/; // Regular expression to split the query
+
+  prepare = function (query, base)
+  {
+    if (!base) base = document;
+    var q  = []; // List of query fragments
+    var qi = 0;  // Query fragment index
+    var v  = []; // List of values
+    var vi = 0;  // Value index
+    var a  = []; // Array containing setters and getters
+    var m;       // Regular expression match
+    while (query) {
+      m = r.exec (query);
+      if (m && m[2]) {
+        q[qi++] = m[1];
+        query   = m[2];
+        (function (qi, vi) {
+          Object.defineProperty (a, vi, {
+            get: function() { return v[vi]; },
+            set: function(val) { v[vi] = val; q[qi] = JSON.stringify(val); }});
+        })(qi++, vi++);
+      } else {
+        q[qi++] = query;
+        query   = null;
+      }
+    }
+    a.toString = function () { return q.join(''); }
+    return a;
+  }
 }
 
+function reference (src_entity, src_attribute, dst_entity, dst_attribute)
+{
+  var src_query = prepare ('#modeler table[data-id=?] tr[data-id=?]');
+  src_query[0] = src_entity;
+  src_query[1] = src_attribute;
+  var src = document.querySelector(src_query);
 
-reference ('Person', 'main_residence', 'Address', 'id');
+  return src;
+}
+
+function test ()
+{
+  return reference ('Person', 'main_residence', 'Address', 'id');
+}
+
+function offset (elem)
+{
+  // (1)
+  var box = elem.getBoundingClientRect()
+
+  var body = document.body
+  var docElem = document.documentElement
+
+  // (2)
+  var scrollTop = window.pageYOffset || docElem.scrollTop || body.scrollTop
+  var scrollLeft = window.pageXOffset || docElem.scrollLeft || body.scrollLeft
+
+  // (3)
+  var clientTop = docElem.clientTop || body.clientTop || 0
+  var clientLeft = docElem.clientLeft || body.clientLeft || 0
+
+  // (4)
+  var top  = box.top +  scrollTop - clientTop
+  var left = box.left + scrollLeft - clientLeft
+
+  return { top: Math.round(top), left: Math.round(left) }
+}
